@@ -9,6 +9,7 @@ interface WorkspacePageProps {
   clauses: Clause[];
   demoQAMap?: Record<string, QAResponse>;
   onSwitchDocument?: (docId: string) => void;
+  onNavigateUpload?: () => void;
 }
 
 export const WorkspacePage: React.FC<WorkspacePageProps> = ({
@@ -16,6 +17,7 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
   clauses,
   demoQAMap,
   onSwitchDocument,
+  onNavigateUpload,
 }) => {
   const [selectedClause, setSelectedClause] = useState<Clause | null>(clauses[0] || null);
 
@@ -45,6 +47,17 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
     <div className="workspace-container">
       {/* Zone 1: Navigation Sidebar */}
       <nav className="zone-nav" aria-label="Document Section Navigation">
+        {onNavigateUpload && (
+          <div style={{ marginBottom: '16px' }}>
+            <button
+              className="cta-btn-primary"
+              style={{ width: '100%', fontSize: '12px', padding: '8px 12px' }}
+              onClick={onNavigateUpload}
+            >
+              ← Upload New Document
+            </button>
+          </div>
+        )}
         <div>
           <div className="nav-section-title">DOCUMENT NAVIGATION</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
