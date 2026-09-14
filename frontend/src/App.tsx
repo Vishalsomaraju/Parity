@@ -11,6 +11,7 @@ import {
   DEMO_FREELANCE_AGGRESSIVE,
   DEMO_QA_MAP,
 } from './data/demoFixtures';
+import { apiUrl } from './config';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<'landing' | 'workspace' | 'compare' | 'upload'>('landing');
@@ -23,7 +24,7 @@ export const App: React.FC = () => {
     setCurrentView('workspace');
   };
 
-  const handleSwitchDocument = async (docId: string) => {
+  const handleSelectDocument = async (docId: string) => {
     if (docId === 'demo_freelance_standard') {
       setActiveDocument(DEMO_FREELANCE_STANDARD.document);
       setActiveClauses(DEMO_FREELANCE_STANDARD.clauses);
@@ -38,8 +39,8 @@ export const App: React.FC = () => {
     // Attempt to load from API if uploaded document
     try {
       const [docRes, clausesRes] = await Promise.all([
-        fetch(`/api/documents/${docId}`),
-        fetch(`/api/documents/${docId}/clauses`),
+        fetch(apiUrl(`/api/documents/${docId}`)),
+        fetch(apiUrl(`/api/documents/${docId}/clauses`)),
       ]);
       if (docRes.ok && clausesRes.ok) {
         const docData = await docRes.json();
@@ -54,7 +55,7 @@ export const App: React.FC = () => {
 
   const handleDocumentProcessed = async (doc: Document) => {
     try {
-      const clausesRes = await fetch(`/api/documents/${doc.id}/clauses`);
+      const clausesRes = await fetch(apiUrl(`/api/documents/${doc.id}/clauses`));
       if (clausesRes.ok) {
         const clauses: Clause[] = await clausesRes.json();
         setActiveDocument(doc);
@@ -88,7 +89,7 @@ export const App: React.FC = () => {
           document={activeDocument}
           clauses={activeClauses}
           demoQAMap={DEMO_QA_MAP}
-          onSwitchDocument={handleSwitchDocument}
+          onSwitchDocument={handleSelectDocument}
         />
       )}
 
@@ -98,7 +99,7 @@ export const App: React.FC = () => {
         <UploadPage
           onDocumentProcessed={handleDocumentProcessed}
           onLoadSample={(key) => {
-            handleSwitchDocument(key);
+            handleSelectDocument(key);
             setCurrentView('workspace');
           }}
         />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DocumentType, ProcessingStatus, Document } from '@parity/shared';
+import { apiUrl } from '../config';
 
 interface UploadPageProps {
   onDocumentProcessed: (doc: Document) => void;
@@ -36,7 +37,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
 
     setUploading(true);
     setError(null);
-    setStatusMessage('Uploading and initializing processing pipeline...');
+    setStatusMessage('Uploading and extracting text...');
     setProgressPercent(15);
 
     try {
@@ -45,7 +46,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
       formData.append('documentType', docType);
 
       // Use sync=true so it completes deterministically in the request
-      const res = await fetch('/api/documents?sync=true', {
+      const res = await fetch(apiUrl('/api/documents?sync=true'), {
         method: 'POST',
         body: formData,
       });
@@ -60,7 +61,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
       setStatusMessage('Finalizing document intelligence...');
 
       // Fetch completed document
-      const docRes = await fetch(`/api/documents/${uploadResult.id}`);
+      const docRes = await fetch(apiUrl(`/api/documents/${uploadResult.id}`));
       if (!docRes.ok) {
         throw new Error('Failed to retrieve processed document.');
       }

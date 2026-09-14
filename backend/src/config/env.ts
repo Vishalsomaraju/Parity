@@ -21,6 +21,7 @@ const EnvSchema = z.object({
   // Upload limits
   MAX_FILE_SIZE_MB: z.coerce.number().default(15),
   FRONTEND_URL: z.string().default('http://localhost:5173'),
+  CORS_ORIGIN: z.string().optional().default(''),
 });
 
 export type EnvConfig = z.infer<typeof EnvSchema>;

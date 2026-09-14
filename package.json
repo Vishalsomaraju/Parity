@@ -16,6 +16,7 @@
     "build:backend": "npm --workspace=backend run build",
     "build:frontend": "npm --workspace=frontend run build",
     "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "start:backend": "node backend/dist/server.js",
     "typecheck": "npm run --workspaces --if-present typecheck",
     "test": "npm --workspace=backend run test && npm --workspace=frontend run test",
     "test:coverage": "npm --workspace=backend run test:coverage",

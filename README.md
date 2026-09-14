@@ -9,7 +9,8 @@
 
 ## Live Demo
 
-- **Production URL**: [https://parity-legal.onrender.com](https://parity-legal.onrender.com)
+- **Frontend (Vercel)**: [https://parity-legal.vercel.app](https://parity-legal.vercel.app)
+- **API Backend (Railway)**: [https://parity-api.up.railway.app](https://parity-api.up.railway.app)
 - **Instant Zero-Latency Demo**: Click **"Try Demo Documents"** on the landing page for precomputed offline analysis across Freelance Contracts, Residential Leases, and Terms of Service.
 
 ---
@@ -137,10 +138,10 @@ See: [PERFORMANCE_REPORT.md](file:///e:/Parity/PERFORMANCE_REPORT.md) for perfor
 
 ## Tech Stack
 
-- **Frontend**: React 18, TypeScript, Vite, Lucide Icons, Vanilla CSS Neo-Brutalist Design System.
-- **Backend**: Node.js, Express, TypeScript, Zod, BullMQ, Redis, PostgreSQL with `pgvector`, PDF-Parse, Mammoth.
+- **Frontend**: React 19, TypeScript, Vite, Lucide Icons, Vanilla CSS Neo-Brutalist Design System.
+- **Backend**: Node.js, Express, TypeScript, Zod, Optional Redis, PostgreSQL with `pgvector`, PDF-Parse, Mammoth.
 - **AI & Embeddings**: Google Gemini 1.5 Flash (Primary), OpenAI GPT-4o-mini (Secondary), Deterministic Heuristic Fallback Engine.
-- **Infrastructure**: Render Blueprint (`render.yaml`), Docker Compose (`docker-compose.yml`), GitHub Actions (`ci.yml`).
+- **Infrastructure**: Vercel (`vercel.json`), Railway (`railway.json`), Docker Compose (`docker-compose.yml`), GitHub Actions (`ci.yml`).
 
 ---
 

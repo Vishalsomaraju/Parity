@@ -24,7 +24,7 @@ app.use('/api', apiRouter);
 // Central Error Handler
 app.use(errorHandler);
 
-const PORT = config.PORT || process.env.PORT || 4000;
+const PORT = Number(config.PORT || process.env.PORT || 4000);
 
 let server: any = null;
 
@@ -38,7 +38,7 @@ export async function startServer(): Promise<any> {
   }
 
   return new Promise((resolve) => {
-    server = app.listen(PORT, () => {
+    server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`=========================================`);
       console.log(`  ⚖️  PARITY API SERVER`);
       console.log(`  Tagline: Know where you stand before you sign.`);

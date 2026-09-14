@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { QAResponse, EvidenceStatus } from '@parity/shared';
+import { apiUrl } from '../../config';
 
 interface ContextualChatProps {
   documentId: string;
@@ -18,14 +19,14 @@ export const ContextualChat: React.FC<ContextualChatProps> = ({
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<QAResponse[]>([]);
 
-  const handleAsk = async (queryText?: string) => {
-    const q = (queryText || question).trim();
-    if (!q) return;
+  const handleAsk = async (customQ?: string) => {
+    const q = customQ || question;
+    if (!q.trim()) return;
 
     setLoading(true);
     try {
-      // If demo mode, check demo map first for instant grounded answer
-      if (isDemo) {
+      // If in demo mode and precomputed answers exist, return instant fixture
+      if (isDemo && Object.keys(demoQAMap).length > 0) {
         const lower = q.toLowerCase();
         let demoMatch: QAResponse | null = null;
 
@@ -45,7 +46,7 @@ export const ContextualChat: React.FC<ContextualChatProps> = ({
       }
 
       // Live API call
-      const res = await fetch(`/api/documents/${documentId}/questions`, {
+      const res = await fetch(apiUrl(`/api/documents/${documentId}/questions`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: q }),
