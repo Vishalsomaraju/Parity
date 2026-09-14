@@ -18,6 +18,11 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    port: 5173,
+    host: '0.0.0.0',
+    strictPort: true,
+  },
   build: {
     target: 'es2022',
     outDir: 'dist',
