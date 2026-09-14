@@ -144,7 +144,6 @@ export function getPool(): Pool {
       (config.NODE_ENV === 'production' ||
         config.DATABASE_URL.includes('sslmode=') ||
         config.DATABASE_URL.includes('rlwy.net') ||
-        config.DATABASE_URL.includes('render.com') ||
         config.DATABASE_URL.includes('neon.tech') ||
         config.DATABASE_URL.includes('supabase'));
 
