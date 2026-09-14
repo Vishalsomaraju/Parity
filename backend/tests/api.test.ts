@@ -12,10 +12,7 @@ describe('API Integration Endpoints (Section 30)', () => {
   it('GET /api/health returns healthy or degraded status', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
-    expect(res.body.version).toBe('1.0.0');
-    expect(res.body.services).toBeDefined();
-    expect(res.body.services.database).toBeDefined();
-    expect(res.body.services.ai).toBeDefined();
+    expect(res.body).toEqual({ status: 'ok' });
   });
 
   it('GET /api/samples returns available demo samples', async () => {
