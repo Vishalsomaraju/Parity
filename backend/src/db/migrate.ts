@@ -2,10 +2,26 @@ import fs from 'fs';
 import path from 'path';
 import { getPool, closePool, isDegradedMode } from './connection';
 import { getConfig } from '../config/env';
+import { SCHEMA_SQL } from './schemaSql';
 
 export async function runMigrations(): Promise<void> {
-  const schemaPath = path.join(__dirname, 'schema.sql');
-  const sql = fs.readFileSync(schemaPath, 'utf8');
+  let sql = SCHEMA_SQL;
+  const candidatePaths = [
+    path.join(__dirname, 'schema.sql'),
+    path.join(__dirname, '../../src/db/schema.sql'),
+    path.join(process.cwd(), 'src/db/schema.sql'),
+    path.join(process.cwd(), 'backend/src/db/schema.sql'),
+  ];
+  for (const p of candidatePaths) {
+    if (fs.existsSync(p)) {
+      try {
+        sql = fs.readFileSync(p, 'utf8');
+        break;
+      } catch {
+        // Fall back to embedded SCHEMA_SQL
+      }
+    }
+  }
 
   console.log('[DB] Running database migrations...');
   try {
