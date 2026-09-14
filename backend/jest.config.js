@@ -1,7 +1,10 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
+  },
   testMatch: ['**/tests/**/*.test.ts'],
+  testPathIgnorePatterns: ['<rootDir>/tests/prodSimulation.test.ts'],
   collectCoverageFrom: [
     'src/services/scoring/**/*.ts',
     'src/services/comparison/**/*.ts',

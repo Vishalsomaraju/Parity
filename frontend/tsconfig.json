@@ -17,7 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@parity/shared": ["../shared/src/index.ts"]
+      "@parity/shared": ["../shared/src/frontend-index.ts"]
     }
   },
   "include": ["src"],

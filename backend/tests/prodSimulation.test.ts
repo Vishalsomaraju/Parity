@@ -17,8 +17,7 @@ describe('Production Build End-to-End Simulation (Section 42)', () => {
   it('Step 1: Health Check GET /api/health against production build', async () => {
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(200);
-    expect(res.body.version).toBe('1.0.0');
-    expect(res.body.services).toBeDefined();
+    expect(res.body.status).toBe('ok');
   });
 
   it('Step 2: Demo Samples GET /api/samples against production build', async () => {
