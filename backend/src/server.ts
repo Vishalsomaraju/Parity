@@ -12,8 +12,8 @@ const config = getConfig();
 // Core Middleware
 app.use(securityHeaders);
 app.use(corsMiddleware);
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+app.use(express.json({ limit: '256kb' }));
+app.use(express.urlencoded({ extended: true, limit: '256kb' }));
 
 // Global Rate Limiting
 app.use('/api', apiLimiter);
@@ -29,12 +29,13 @@ const PORT = Number(config.PORT || process.env.PORT || 4000);
 let server: any = null;
 
 export async function startServer(): Promise<any> {
+  const currentConfig = getConfig();
   // Initialize database schema and seeds if PostgreSQL is reachable
   try {
     await runMigrations();
     await seedBenchmarks();
   } catch (err: any) {
-    if (config.NODE_ENV === 'production') {
+    if (currentConfig.NODE_ENV === 'production') {
       console.error('[Server] Fatal: Database initialization failed in production mode.');
       throw new Error('Database initialization failed: DATABASE_URL is required and must be reachable in production.');
     }
@@ -55,19 +56,25 @@ export async function startServer(): Promise<any> {
   });
 }
 
+export async function stopServer(): Promise<void> {
+  return new Promise((resolve) => {
+    if (server) {
+      server.close(() => {
+        server = null;
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
+}
+
 // Graceful Shutdown
 async function handleShutdown(signal: string) {
   console.log(`\n[Server] Received ${signal}. Shutting down gracefully...`);
-  if (server) {
-    server.close(async () => {
-      console.log('[Server] HTTP server closed.');
-      await closePool();
-      console.log('[Server] Database pool terminated.');
-      process.exit(0);
-    });
-  } else {
-    process.exit(0);
-  }
+  await stopServer();
+  await closePool();
+  process.exit(0);
 }
 
 process.on('SIGTERM', () => handleShutdown('SIGTERM'));

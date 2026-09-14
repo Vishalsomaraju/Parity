@@ -137,3 +137,9 @@ CREATE TABLE IF NOT EXISTS qa_interactions (
   limitation_note TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_fine_print_document_id ON fine_print(document_id);
+CREATE INDEX IF NOT EXISTS idx_obligations_document_id ON obligations(document_id);
+CREATE INDEX IF NOT EXISTS idx_timelines_document_id ON timelines(document_id);
+CREATE INDEX IF NOT EXISTS idx_comparison_results_docs ON comparison_results(document_a_id, document_b_id);
+CREATE INDEX IF NOT EXISTS idx_qa_interactions_document_id ON qa_interactions(document_id);

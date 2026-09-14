@@ -62,3 +62,7 @@ export function getConfig(): EnvConfig {
   }
   return parsedConfig;
 }
+
+export function resetConfigForTest(): void {
+  parsedConfig = null;
+}

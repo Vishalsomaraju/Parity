@@ -7,15 +7,50 @@ import { getConfig } from '../config/env';
 /**
  * Helmet configuration
  */
-export const securityHeaders = helmet({
-  contentSecurityPolicy: false, // Allows Vite dev & embedded API usage
-  crossOriginEmbedderPolicy: false,
-});
+/**
+ * Helmet configuration:
+ * Production enforces CSP, HSTS, frame protection (deny), nosniff, and strict referrer policy.
+ */
+export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+  const config = getConfig();
+  const isProd = config.NODE_ENV === 'production';
+
+  return helmet({
+    contentSecurityPolicy: isProd
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+            fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+            imgSrc: ["'self'", 'data:', 'blob:'],
+            connectSrc: ["'self'", config.FRONTEND_URL || '*', 'https://*.railway.app'],
+            frameAncestors: ["'none'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"],
+          },
+        }
+      : false,
+    crossOriginEmbedderPolicy: false,
+    hsts: isProd
+      ? {
+          maxAge: 31536000,
+          includeSubDomains: true,
+          preload: true,
+        }
+      : false,
+    frameguard: { action: 'deny' },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    xContentTypeOptions: true,
+  })(req, res, next);
+};
 
 /**
  * CORS configuration
  * In development: allows localhost frontends.
  * In production: strictly restricts origins to configured FRONTEND_URL and CORS_ORIGIN (e.g. Vercel deployment).
+ * credentials set to false as Parity is a stateless API with no session cookies.
  */
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
@@ -47,7 +82,7 @@ export const corsMiddleware = cors({
     console.warn(`[CORS] Blocked unauthorized origin in production: ${origin}`);
     return callback(new Error('Not allowed by CORS policy in production.'));
   },
-  credentials: true,
+  credentials: false,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 });
@@ -80,20 +115,42 @@ export const expensiveEndpointLimiter = rateLimit({
 
 /**
  * Safe sanitized error handling middleware:
- * Never exposes raw database errors or API credentials to client.
+ * Never exposes raw database errors, connection strings, or API credentials to client.
  */
 export function errorHandler(err: any, req: Request, res: Response, next: NextFunction): void {
   const isDev = getConfig().NODE_ENV === 'development';
-  const statusCode = err.status || err.statusCode || 500;
+  let statusCode = err.status || err.statusCode || 500;
+  let code = err.code || 'INTERNAL_ERROR';
+  let message = err.message || 'An unexpected error occurred.';
+
+  // Handle entity too large (JSON body limit exceeded or oversized file)
+  if (err.type === 'entity.too.large' || err.code === 'LIMIT_FILE_SIZE') {
+    statusCode = 413;
+    code = 'PAYLOAD_TOO_LARGE';
+    message = 'Request payload exceeds the maximum allowed size limit.';
+  }
+
+  // Handle JSON syntax error
+  if (err instanceof SyntaxError && 'body' in err && statusCode === 400) {
+    code = 'INVALID_JSON';
+    message = 'Malformed JSON body in request.';
+  }
 
   console.error('[Error Guard]', {
     method: req.method,
     path: req.path,
+    statusCode,
+    code,
     message: err.message,
   });
 
+  // Never leak credentials, DB strings, or stack traces in production
+  if (statusCode === 500 && !isDev) {
+    message = 'An unexpected server error occurred. Please try again later.';
+  }
+
   res.status(statusCode).json({
-    error: statusCode === 500 && !isDev ? 'An unexpected server error occurred.' : err.message || 'Error',
-    code: err.code || 'INTERNAL_ERROR',
+    error: message,
+    code,
   });
 }

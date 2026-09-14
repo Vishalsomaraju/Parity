@@ -86,5 +86,48 @@ describe('Document Comparison Module', () => {
     expect(comparison.topics.length).toBe(1);
     expect(comparison.topics[0].topic).toBe(ClauseType.General);
   });
+
+  it('correctly compares same document against itself (all equivalent, 0 missing)', async () => {
+    const doc = [
+      { clauseIndex: 1, clauseType: ClauseType.PaymentTerms, clauseText: 'Payment net 30 days.' },
+      { clauseIndex: 2, clauseType: ClauseType.Termination, clauseText: 'Termination upon 30 days notice.' },
+    ];
+
+    const comparison = await compareDocuments(doc, doc, 'doc1', 'doc1_copy');
+    expect(comparison.topics.length).toBe(2);
+    expect(comparison.summary.aStrongerCount).toBe(0);
+    expect(comparison.summary.bStrongerCount).toBe(0);
+    expect(comparison.summary.missingProtectionCount).toBe(0);
+    expect(comparison.topics.every((t) => t.verdict === ComparisonVerdict.Equivalent)).toBe(true);
+  });
+
+  it('aligns clauses by topic and semantic content, not by section index or clause order', async () => {
+    // Document A has Order: 1. Termination, 2. Payment
+    const docA = [
+      { clauseIndex: 1, clauseType: ClauseType.Termination, clauseText: 'Termination upon 30 days notice.' },
+      { clauseIndex: 2, clauseType: ClauseType.PaymentTerms, clauseText: 'Payment within 30 days.' },
+    ];
+
+    // Document B has Reversed Order: 1. Payment, 2. Termination
+    const docB = [
+      { clauseIndex: 1, clauseType: ClauseType.PaymentTerms, clauseText: 'Payment within 30 days.' },
+      { clauseIndex: 2, clauseType: ClauseType.Termination, clauseText: 'Termination upon 30 days notice.' },
+    ];
+
+    const comparison = await compareDocuments(docA, docB, 'docA', 'docB');
+    expect(comparison.topics.length).toBe(2);
+
+    const paymentTopic = comparison.topics.find((t) => t.topic === ClauseType.PaymentTerms);
+    expect(paymentTopic).toBeDefined();
+    expect(paymentTopic?.docAText).toBe('Payment within 30 days.');
+    expect(paymentTopic?.docBText).toBe('Payment within 30 days.');
+    expect(paymentTopic?.verdict).toBe(ComparisonVerdict.Equivalent);
+
+    const termTopic = comparison.topics.find((t) => t.topic === ClauseType.Termination);
+    expect(termTopic).toBeDefined();
+    expect(termTopic?.docAText).toBe('Termination upon 30 days notice.');
+    expect(termTopic?.docBText).toBe('Termination upon 30 days notice.');
+    expect(termTopic?.verdict).toBe(ComparisonVerdict.Equivalent);
+  });
 });
 

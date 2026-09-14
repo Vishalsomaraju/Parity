@@ -3,13 +3,17 @@
  */
 
 const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|prior)\s+instructions/gi,
-  /you\s+are\s+now\s+a/gi,
-  /system\s+prompt\s*:/gi,
-  /<\/?system>/gi,
+  /ignore\s+(all\s+)?(previous|prior|above)\s+instructions/gi,
+  /disregard\s+(all\s+)?(previous|prior|above|the\s+entire)\s+(instructions|agreement|rules|context)?/gi,
+  /you\s+are\s+now\s+(a|an)/gi,
+  /pretend\s+(you\s+are|to\s+be)/gi,
+  /\b(system|developer|assistant)\s*(prompt)?\s*:/gi,
+  /\[\s*(system|developer|assistant)\s*:/gi,
+  /<\/?(system|developer|assistant)>/gi,
   /jailbreak/gi,
-  /act\s+as\s+an\s+unrestricted/gi,
-  /bypass\s+all\s+rules/gi,
+  /act\s+as\s+(an?\s+)?unrestricted/gi,
+  /override\s+(all\s+)?(the\s+)?rules/gi,
+  /bypass\s+(all\s+)?(the\s+)?rules/gi,
 ];
 
 /**

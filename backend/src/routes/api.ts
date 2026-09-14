@@ -19,18 +19,66 @@ import { answerContextualQuestion } from '../services/qa/qaService';
 import { generateId } from '../utils/hash';
 import { getConfig } from '../config/env';
 import { expensiveEndpointLimiter } from '../middleware/security';
+import { ExtractionError } from '../services/extraction/textExtractor';
 
 const router = express.Router();
+const SAFE_ID_REGEX = /^[a-zA-Z0-9_-]{1,64}$/;
+const ALLOWED_EXTENSIONS = ['.pdf', '.docx', '.txt'];
+
+// Multer configured from single source of truth: MAX_FILE_SIZE_MB
 const upload = multer({
-  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB limit
+  limits: {
+    fileSize: (getConfig().MAX_FILE_SIZE_MB || 15) * 1024 * 1024,
+  },
   storage: multer.memoryStorage(),
+  fileFilter: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return cb(new Error(`Unsupported file extension: ${ext || 'none'}. Only PDF, DOCX, and TXT are supported.`));
+    }
+
+    const mime = (file.mimetype || '').toLowerCase();
+    // Validate MIME/extension alignment (Section 7)
+    if (ext === '.pdf' && !mime.includes('pdf') && mime !== 'application/octet-stream') {
+      return cb(new Error('Mismatched file type: .pdf file must have application/pdf MIME type.'));
+    }
+    if (
+      ext === '.docx' &&
+      !mime.includes('word') &&
+      !mime.includes('officedocument') &&
+      !mime.includes('zip') &&
+      mime !== 'application/octet-stream'
+    ) {
+      return cb(new Error('Mismatched file type: .docx file must have Word document MIME type.'));
+    }
+    if (ext === '.txt' && !mime.includes('text') && mime !== 'application/octet-stream' && mime !== '') {
+      return cb(new Error('Mismatched file type: .txt file must have text/plain MIME type.'));
+    }
+
+    cb(null, true);
+  },
 });
+
+const handleUploadMiddleware = (req: Request, res: Response, next: express.NextFunction) => {
+  upload.single('file')(req, res, (err: any) => {
+    if (err) {
+      if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({
+          error: `File exceeds maximum allowed size of ${getConfig().MAX_FILE_SIZE_MB}MB.`,
+          code: 'LIMIT_FILE_SIZE',
+        });
+      }
+      return res.status(400).json({ error: err.message, code: err.code || 'INVALID_UPLOAD' });
+    }
+    next();
+  });
+};
 
 const startTime = Date.now();
 
 /**
  * GET /api/health
- * Deterministic, fast health check for Render / load balancers
+ * Deterministic, fast health check for Railway / load balancers
  */
 router.get('/health', (req: Request, res: Response) => {
   const config = getConfig();
@@ -43,11 +91,12 @@ router.get('/health', (req: Request, res: Response) => {
     environment: config.NODE_ENV,
     services: {
       database: degraded ? 'session_fallback' : 'connected',
-      ai: config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none'
-        ? 'primary_active'
-        : config.OPENAI_API_KEY
-        ? 'secondary_active'
-        : 'deterministic_fallback',
+      ai:
+        config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none'
+          ? 'primary_active'
+          : config.OPENAI_API_KEY
+          ? 'secondary_active'
+          : 'deterministic_fallback',
       worker: config.ENABLE_WORKER ? 'background_active' : 'in_process_fallback',
     },
   };
@@ -62,15 +111,24 @@ router.get('/health', (req: Request, res: Response) => {
 router.post(
   '/documents',
   expensiveEndpointLimiter,
-  upload.single('file'),
+  handleUploadMiddleware,
   async (req: Request, res: Response, next) => {
     try {
       const file = req.file;
-      const documentType = (req.body.documentType as DocumentType) || DocumentType.FreelanceServices;
+      const rawDocType = req.body.documentType || DocumentType.FreelanceServices;
+      const validDocTypes = Object.values(DocumentType);
+
+      if (!validDocTypes.includes(rawDocType)) {
+        return res.status(400).json({
+          error: `Invalid documentType: '${rawDocType}'. Must be one of: ${validDocTypes.join(', ')}`,
+        });
+      }
+
+      const documentType = rawDocType as DocumentType;
       const isSync = req.query.sync === 'true';
 
-      if (!file) {
-        return res.status(400).json({ error: 'No file uploaded. Please provide a PDF, DOCX, or TXT document.' });
+      if (!file || !file.buffer || file.buffer.length === 0) {
+        return res.status(400).json({ error: 'Uploaded file is empty (0 bytes). Please provide a valid document.' });
       }
 
       const documentId = generateId('doc');
@@ -85,27 +143,37 @@ router.post(
       );
 
       // Dispatch processing (async in background or sync)
-      await dispatchDocumentProcessing(
-        {
-          documentId,
-          filePathOrBuffer: file.buffer,
-          filename,
-          mimeType,
-          documentType,
-          isDemo: false,
-        },
-        isSync
-      );
+      try {
+        await dispatchDocumentProcessing(
+          {
+            documentId,
+            filePathOrBuffer: file.buffer,
+            filename,
+            mimeType,
+            documentType,
+            isDemo: false,
+          },
+          isSync
+        );
+      } catch (dispatchErr: any) {
+        if (dispatchErr instanceof ExtractionError) {
+          return res.status(dispatchErr.statusCode).json({ error: dispatchErr.message, code: 'EXTRACTION_ERROR' });
+        }
+        throw dispatchErr;
+      }
 
       res.status(202).json({
         id: documentId,
         filename,
         documentType,
-        status: ProcessingStatus.Queued,
+        status: isSync ? ProcessingStatus.Complete : ProcessingStatus.Queued,
         isDemo: false,
         message: 'Document uploaded and processing initialized.',
       });
-    } catch (err) {
+    } catch (err: any) {
+      if (err instanceof ExtractionError) {
+        return res.status(err.statusCode).json({ error: err.message, code: 'EXTRACTION_ERROR' });
+      }
       next(err);
     }
   }
@@ -117,6 +185,10 @@ router.post(
  */
 router.get('/documents/:id', async (req: Request, res: Response, next) => {
   try {
+    if (!SAFE_ID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid document ID format.' });
+    }
+
     const doc = await queryOne<any>(`SELECT * FROM documents WHERE id = $1`, [req.params.id]);
     if (!doc) {
       return res.status(404).json({ error: 'Document not found' });
@@ -161,6 +233,10 @@ router.get('/documents/:id', async (req: Request, res: Response, next) => {
  */
 router.get('/documents/:id/status', async (req: Request, res: Response, next) => {
   try {
+    if (!SAFE_ID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid document ID format.' });
+    }
+
     const doc = await queryOne<any>(`SELECT status, error_message, is_demo FROM documents WHERE id = $1`, [
       req.params.id,
     ]);
@@ -190,6 +266,10 @@ router.get('/documents/:id/status', async (req: Request, res: Response, next) =>
  */
 router.get('/documents/:id/clauses', async (req: Request, res: Response, next) => {
   try {
+    if (!SAFE_ID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid document ID format.' });
+    }
+
     const rows = await query<any>(`SELECT * FROM clauses WHERE document_id = $1 ORDER BY clause_index ASC`, [
       req.params.id,
     ]);
@@ -226,6 +306,10 @@ router.get('/documents/:id/clauses', async (req: Request, res: Response, next) =
  */
 router.post('/documents/:id/questions', expensiveEndpointLimiter, async (req: Request, res: Response, next) => {
   try {
+    if (!SAFE_ID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid document ID format.' });
+    }
+
     const parseResult = QARequestSchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Question must be between 3 and 500 characters.' });
@@ -291,6 +375,10 @@ router.post('/compare', expensiveEndpointLimiter, async (req: Request, res: Resp
 
     const { documentAId, documentBId, labelA, labelB } = parseResult.data;
 
+    if (!SAFE_ID_REGEX.test(documentAId) || !SAFE_ID_REGEX.test(documentBId)) {
+      return res.status(400).json({ error: 'Invalid document ID format in comparison request.' });
+    }
+
     const [clausesA, clausesB] = await Promise.all([
       query<any>(`SELECT clause_type, clause_text, clause_index FROM clauses WHERE document_id = $1`, [documentAId]),
       query<any>(`SELECT clause_type, clause_text, clause_index FROM clauses WHERE document_id = $1`, [documentBId]),
@@ -337,6 +425,10 @@ router.post('/compare', expensiveEndpointLimiter, async (req: Request, res: Resp
  */
 router.get('/compare/:id', async (req: Request, res: Response, next) => {
   try {
+    if (!SAFE_ID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid comparison ID format.' });
+    }
+
     const row = await queryOne<any>(`SELECT * FROM comparison_results WHERE id = $1`, [req.params.id]);
     if (!row) {
       return res.status(404).json({ error: 'Comparison result not found' });

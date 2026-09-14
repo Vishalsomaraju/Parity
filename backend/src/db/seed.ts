@@ -1,4 +1,5 @@
 import { query, loadBenchmarkSeeds, closePool, isDegradedMode } from './connection';
+import { getConfig } from '../config/env';
 
 export async function seedBenchmarks(): Promise<void> {
   console.log('[DB] Seeding benchmark corpus...');
@@ -36,6 +37,10 @@ export async function seedBenchmarks(): Promise<void> {
     }
     console.log(`[DB] Successfully seeded ${seeds.length} benchmark clauses into database.`);
   } catch (err: any) {
+    if (getConfig().NODE_ENV === 'production') {
+      console.error('[DB] Benchmark seeding failed in production mode:', err.message);
+      throw new Error(`Benchmark seeding failed in production: ${err.message}`);
+    }
     console.warn('[DB] Seeding note:', err.message);
   }
 }

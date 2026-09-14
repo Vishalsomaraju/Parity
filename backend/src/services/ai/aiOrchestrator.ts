@@ -16,6 +16,12 @@ export interface LLMResult<T> {
   rawOutput?: string;
 }
 
+export function sanitizeErrorMessage(msg: string): string {
+  return (msg || '')
+    .replace(/key=[a-zA-Z0-9_\-\.]+/gi, 'key=[REDACTED_API_KEY]')
+    .replace(/Bearer\s+[a-zA-Z0-9_\-\.]+/gi, 'Bearer [REDACTED_BEARER]');
+}
+
 /**
  * Execute structured AI call with:
  * Primary (Gemini) -> Secondary (OpenAI) -> Deterministic Fallback
@@ -25,8 +31,8 @@ export async function executeStructuredAI<T>(
 ): Promise<LLMResult<T>> {
   const config = getConfig();
 
-  // In automated test runs, utilize fast deterministic fallback directly
-  if (config.NODE_ENV === 'test') {
+  // In automated test runs without mock keys, utilize fast deterministic fallback directly
+  if (config.NODE_ENV === 'test' && (!config.GEMINI_API_KEY || config.GEMINI_API_KEY === 'none') && !config.OPENAI_API_KEY) {
     return {
       data: options.deterministicFallback(),
       provider: 'deterministic_fallback',
@@ -48,7 +54,7 @@ export async function executeStructuredAI<T>(
         return { data: parsed, provider: 'gemini', rawOutput: geminiOutput };
       }
     } catch (err: any) {
-      console.warn(`[AI] Primary Gemini call failed: ${err.message}. Trying secondary provider...`);
+      console.warn(`[AI] Primary Gemini call failed: ${sanitizeErrorMessage(err.message)}. Trying secondary provider...`);
     }
   }
 
@@ -68,7 +74,7 @@ export async function executeStructuredAI<T>(
         return { data: parsed, provider: 'openai', rawOutput: openaiOutput };
       }
     } catch (err: any) {
-      console.warn(`[AI] Secondary OpenAI call failed: ${err.message}. Activating deterministic fallback.`);
+      console.warn(`[AI] Secondary OpenAI call failed: ${sanitizeErrorMessage(err.message)}. Activating deterministic fallback.`);
     }
   }
 
@@ -183,9 +189,20 @@ async function callOpenAIWithTimeout(
  */
 export function cleanAndParseJSON<T>(rawText: string, schema: z.ZodSchema<T>): T | null {
   try {
+    if (!rawText || !rawText.trim()) return null;
+
     let cleaned = rawText.trim();
-    if (cleaned.startsWith('```')) {
-      cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    
+    // Check for markdown code blocks first
+    const codeBlockMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    if (codeBlockMatch) {
+      cleaned = codeBlockMatch[1].trim();
+    } else {
+      // Fall back to extracting first valid outer object or array if conversational text surrounds it
+      const outerMatch = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+      if (outerMatch) {
+        cleaned = outerMatch[1].trim();
+      }
     }
 
     // Parse JSON

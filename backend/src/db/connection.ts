@@ -130,20 +130,33 @@ export function loadBenchmarkSeeds(): any[] {
 export function getPool(): Pool {
   if (!pool) {
     const config = getConfig();
-    const isSsl =
-      config.NODE_ENV === 'production' ||
-      config.DATABASE_URL.includes('sslmode=') ||
-      config.DATABASE_URL.includes('railway') ||
-      config.DATABASE_URL.includes('render.com') ||
-      config.DATABASE_URL.includes('neon.tech') ||
-      config.DATABASE_URL.includes('supabase');
+
+    // Railway internal private network (e.g. postgres.railway.internal) uses direct unencrypted container networking.
+    // External proxy URLs (e.g. proxy.rlwy.net, Neon, Supabase) require TLS with relaxed verification for cloud proxies.
+    const isInternalRailway = config.DATABASE_URL.includes('railway.internal');
+    const isLocalhost = config.DATABASE_URL.includes('localhost') || config.DATABASE_URL.includes('127.0.0.1');
+    const isExplicitSslDisable = config.DATABASE_URL.includes('sslmode=disable');
+
+    const shouldEnableSsl =
+      !isInternalRailway &&
+      !isLocalhost &&
+      !isExplicitSslDisable &&
+      (config.NODE_ENV === 'production' ||
+        config.DATABASE_URL.includes('sslmode=') ||
+        config.DATABASE_URL.includes('rlwy.net') ||
+        config.DATABASE_URL.includes('render.com') ||
+        config.DATABASE_URL.includes('neon.tech') ||
+        config.DATABASE_URL.includes('supabase'));
+
+    // Conservative connection pool size: 5 connections for 1 API instance on Railway starter/standard tier
+    const maxConnections = Math.max(2, Math.min(10, Number(process.env.DB_POOL_MAX || 5)));
 
     const poolConfig: PoolConfig = {
       connectionString: config.DATABASE_URL,
-      max: 10,
+      max: maxConnections,
       idleTimeoutMillis: 15000,
-      connectionTimeoutMillis: 3000, // Quick timeout to activate survival mode smoothly
-      ...(isSsl ? { ssl: { rejectUnauthorized: false } } : {}),
+      connectionTimeoutMillis: 5000,
+      ...(shouldEnableSsl ? { ssl: { rejectUnauthorized: false } } : {}),
     };
     pool = new Pool(poolConfig);
 
