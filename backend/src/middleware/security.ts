@@ -69,13 +69,26 @@ export const corsMiddleware = cors({
     // In production, build allowed origins set from environment variables
     const allowedOrigins = new Set<string>();
     if (config.FRONTEND_URL) {
-      config.FRONTEND_URL.split(',').forEach((url) => allowedOrigins.add(url.trim()));
+      config.FRONTEND_URL.split(',').forEach((url) => {
+        const trimmed = url.trim();
+        if (trimmed) {
+          allowedOrigins.add(trimmed);
+          allowedOrigins.add(trimmed.replace(/\/+$/, ''));
+        }
+      });
     }
     if (config.CORS_ORIGIN) {
-      config.CORS_ORIGIN.split(',').forEach((url) => allowedOrigins.add(url.trim()));
+      config.CORS_ORIGIN.split(',').forEach((url) => {
+        const trimmed = url.trim();
+        if (trimmed) {
+          allowedOrigins.add(trimmed);
+          allowedOrigins.add(trimmed.replace(/\/+$/, ''));
+        }
+      });
     }
 
-    if (allowedOrigins.has(origin)) {
+    const cleanOrigin = origin.replace(/\/+$/, '');
+    if (allowedOrigins.has(origin) || allowedOrigins.has(cleanOrigin)) {
       return callback(null, true);
     }
 
