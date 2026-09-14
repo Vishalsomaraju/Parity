@@ -1,0 +1,30 @@
+INDEPENDENT CONTRACTOR SERVICES AGREEMENT (STANDARD)
+
+This Independent Contractor Services Agreement ("Agreement") is made effective as of October 1, 2025, by and between Apex Media Labs LLC ("Client") and Jordan Taylor ("Contractor").
+
+1. SCOPE OF WORK
+Contractor shall provide senior UI/UX design and front-end engineering services as specified in Exhibit A. Any modifications, additional deliverables, or changes to project milestones shall require a written Change Order signed by both parties, specifying schedule adjustments and additional fees.
+
+2. PAYMENT TERMS
+Client shall pay Contractor the sum of $85.00 per hour, invoiced bi-weekly. Client agrees to remit payment within thirty (30) days of invoice receipt (Net-30). In the event of a disputed line item, Client shall pay all undisputed charges and provide written explanation of the dispute within fifteen (15) days.
+
+3. INTELLECTUAL PROPERTY
+Upon receipt of full and final payment for the applicable milestone, Contractor assigns to Client all right, title, and interest in deliverables created under this Agreement. Contractor retains sole ownership of pre-existing background technology, design systems, and software tools developed independently.
+
+4. CONFIDENTIALITY
+Both parties agree to hold confidential information in strict confidence and use it solely to fulfill obligations under this Agreement. Confidentiality obligations shall endure for two (2) years following termination.
+
+5. INDEMNIFICATION
+Each party shall indemnify, defend, and hold harmless the other party against third-party claims arising from gross negligence, willful misconduct, or intellectual property infringement caused by the indemnifying party.
+
+6. LIMITATION OF LIABILITY
+Neither party shall be liable for indirect, incidental, or consequential damages. Total cumulative liability under this Agreement shall not exceed the total fees paid or payable by Client in the preceding six (6) months.
+
+7. TERMINATION
+Either party may terminate this Agreement without cause upon thirty (30) days' prior written notice. Either party may terminate immediately for material breach if the breaching party fails to cure within fifteen (15) days of notice. Upon termination, Client shall pay Contractor for all work completed through the date of termination.
+
+8. NON-SOLICITATION
+During the term of this Agreement and for twelve (12) months thereafter, neither party shall solicit the employees or contractors of the other party. Contractor remains fully entitled to perform design and engineering services for any other commercial client.
+
+9. GOVERNING LAW AND DISPUTES
+This Agreement shall be governed by the laws of the State of California. The parties agree to submit disputes to good-faith mediation prior to commencing legal proceedings.

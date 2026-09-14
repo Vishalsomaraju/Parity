@@ -1,0 +1,30 @@
+MASTER SERVICES CONTRACTOR AGREEMENT (GLOBAL HOLDINGS)
+
+This Master Services Agreement ("Agreement") is entered into on October 1, 2025, by Omnicorp Global Enterprise Inc. ("Company") and Jordan Taylor ("Contractor").
+
+1. SCOPE OF SERVICES
+Contractor shall perform all services directed by Company, including any modifications, revisions, or emergency tasks demanded by Company at any time without additional compensation. Company retains sole discretion over project acceptance and revisions.
+
+2. COMPENSATION AND PAYMENT
+Company shall compensate Contractor at the rate of $75.00 per hour. Payment shall be issued within ninety (90) business days following final client approval and acceptance of all deliverables. Company reserves the right to withhold all pending invoices if any dispute arises regarding any single deliverable.
+
+3. WORK PRODUCT AND IP ASSIGNMENT
+Contractor hereby unconditionally assigns to Company, immediately upon inception and prior to receipt of payment, all worldwide right, title, interest, patents, trademarks, and copyrights in any idea, code, invention, or design conceived or developed during the engagement term, whether on Company premises or personal equipment. Contractor irrevocably waives all moral rights.
+
+4. CONFIDENTIALITY AND NON-DISCLOSURE
+Contractor shall maintain perpetual secrecy over all Company materials, practices, and communications. Contractor shall not disclose having worked with Company to any future prospective employer without Company's written consent.
+
+5. UNILATERAL INDEMNIFICATION
+Contractor agrees to defend, indemnify, and hold harmless Company, its officers, directors, and affiliates from all claims, damages, liabilities, costs, and legal fees arising out of Contractor's performance, alleged negligence, or any claim related to the deliverables, without limitation.
+
+6. LIMITATION OF LIABILITY
+Company's aggregate liability under this Agreement for any and all claims shall be capped at $100.00. Contractor's liability to Company is unlimited and Contractor expressly waives all damage caps and statutory limits.
+
+7. TERMINATION AND FORFEITURE
+Company may terminate this Agreement immediately at any time without notice and without cause. Contractor must provide ninety (90) days' prior written notice to terminate. In the event of termination by Company, Contractor forfeits all accrued but unpaid compensation for any unaccepted work.
+
+8. NON-COMPETE AND EXCLUSIVITY
+For a period of twenty-four (24) months following termination, Contractor shall not engage in, consult for, or provide software engineering or UI design services to any entity that competes directly or indirectly with Company in North America.
+
+9. JURISDICTION AND ARBITRATION
+All disputes shall be resolved exclusively through confidential binding arbitration in Delaware. Contractor shall bear all filing fees, arbitrator costs, and Company's legal expenses in connection with any dispute.

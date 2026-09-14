@@ -1,0 +1,21 @@
+TERMS OF SERVICE AND USER AGREEMENT (STANDARD)
+
+Last Updated: September 1, 2025.
+
+1. ACCEPTANCE AND ELIGIBILITY
+By creating an account on CloudFlow ("Service"), you agree to these Terms. You must be at least 18 years of age to register for a commercial account.
+
+2. USER CONTENT AND INTELLECTUAL PROPERTY
+You retain complete ownership and intellectual property rights in all data, files, and content you upload. You grant CloudFlow a limited, non-exclusive license solely to host, cache, and transmit your content as necessary to provide the Service.
+
+3. PRIVACY AND DATA PROTECTION
+CloudFlow does not sell, rent, or trade your personal data to third parties. We collect minimal telemetry strictly to maintain service performance. You may export or permanently delete your account and all data at any time from your account settings.
+
+4. SUBSCRIPTION AND CANCELLATION
+Subscriptions renew monthly. You may cancel your subscription at any time with one click in your billing dashboard. Cancellation takes effect at the end of the current billing cycle with no cancellation penalties.
+
+5. MODIFICATIONS TO TERMS
+We will notify you by email at least thirty (30) days in advance of any material changes to these Terms. If you do not agree to the updated terms, you may close your account and receive a prorated refund for unused prepaid service.
+
+6. DISPUTE RESOLUTION
+Any dispute shall be handled through informal dispute resolution for thirty (30) days. The parties retain the right to bring claims in local small claims courts.

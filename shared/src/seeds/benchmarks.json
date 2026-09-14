@@ -1,0 +1,162 @@
+[
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Payment Terms",
+    "referenceText": "Client shall pay Contractor the agreed-upon fees within thirty (30) days of receiving a valid invoice. Invoices shall be submitted upon completion of designated milestones or monthly. In the event of a good-faith dispute over any invoice item, Client shall pay the undisputed portion and notify Contractor within fifteen (15) days.",
+    "plainLanguageMeaning": "Invoices are paid within 30 days. Disputed items don't delay payment for undisputed work.",
+    "commonRiskPatterns": ["Net-90 or Net-120 payment terms", "Right to withhold entire payment for partial dispute", "Pay-when-paid or pay-if-paid clauses"],
+    "sourceAttribution": "Common Paper Standard Freelance Agreement & Freelancers Union Model Terms"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Scope of Work",
+    "referenceText": "Contractor shall provide services strictly as set forth in the executed Statement of Work (SOW). Any material modification or addition to the scope shall require a written Change Order signed by both parties, detailing adjustments to schedule and compensation.",
+    "plainLanguageMeaning": "Work is strictly bounded by the agreed SOW; extra requests require written agreement on extra time and pay.",
+    "commonRiskPatterns": ["Unilateral scope changes by client without price adjustment", "Vague catch-all duties like 'any related tasks required'"],
+    "sourceAttribution": "AIGA Standard Form of Agreement & Model Professional Services Contract"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Intellectual Property",
+    "referenceText": "Upon receipt of full and final payment, Contractor assigns to Client all right, title, and interest in deliverables created specifically under this Agreement. Contractor retains sole ownership of pre-existing intellectual property, tools, frameworks, and methodologies, granting Client a perpetual, royalty-free non-exclusive license to use them solely as embedded in the deliverables.",
+    "plainLanguageMeaning": "Client owns the custom deliverables only after paying in full. Contractor retains their own prior tools and general skills.",
+    "commonRiskPatterns": ["Assignment of IP prior to payment", "Broad assignment of contractor's pre-existing IP and unrelated inventions", "Transfer of moral rights without limitation"],
+    "sourceAttribution": "Common Paper Cloud & Services Standard Contract"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Confidentiality",
+    "referenceText": "Each party agrees to safeguard the Confidential Information of the other party using the same degree of care it uses for its own confidential information, but no less than a reasonable degree of care. Confidentiality obligations shall endure for two (2) years following the termination of this Agreement, except for trade secrets which remain protected under law.",
+    "plainLanguageMeaning": "Mutual protection of private information for 2 years. Standard reasonable care standard.",
+    "commonRiskPatterns": ["One-sided confidentiality protecting only the client", "Perpetual duration for standard business information", "Overly broad definition including public or contractor knowledge"],
+    "sourceAttribution": "Standard Mutual Non-Disclosure Agreement (MNDA)"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Indemnification",
+    "referenceText": "Each party shall defend, indemnify, and hold harmless the other party against third-party claims arising directly from the indemnifying party's gross negligence, willful misconduct, or infringement of third-party intellectual property rights. Prompt written notice and full defense control are required conditions.",
+    "plainLanguageMeaning": "Mutual protection against third-party lawsuits caused by gross negligence or copyright violation.",
+    "commonRiskPatterns": ["Unilateral indemnity where contractor protects client from everything including ordinary negligence", "Contractor indemnifying client for client's own conduct or specifications", "Duty to defend without client prompt notice"],
+    "sourceAttribution": "Common Paper Balanced Indemnity Provision"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Limitation of Liability",
+    "referenceText": "To the maximum extent permitted by applicable law, neither party shall be liable for any indirect, consequential, special, or punitive damages. Each party's aggregate liability arising out of or related to this Agreement shall be capped at the total amount paid or payable by Client to Contractor in the twelve (12) months preceding the claim.",
+    "plainLanguageMeaning": "Damages are capped at what was paid under the contract. Neither party can be sued for indirect lost profits.",
+    "commonRiskPatterns": ["Unlimited liability for the contractor while client liability is capped", "Excluding indemnification or confidentiality from liability caps", "Super-caps exceeding contract value"],
+    "sourceAttribution": "ABA Model Contract Terms & Commercial Standard Practice"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Termination",
+    "referenceText": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice. Either party may terminate immediately for cause if the other party materially breaches this Agreement and fails to cure such breach within fifteen (15) days of written notice. Upon termination, Client shall pay Contractor for all services satisfactorily rendered through the termination date.",
+    "plainLanguageMeaning": "Either party can exit with 30 days notice; cure period for breach; contractor is paid for all work done.",
+    "commonRiskPatterns": ["Client can cancel at will without paying for work in progress", "Zero-day termination notice for client only", "Immediate forfeiture of deliverables upon termination"],
+    "sourceAttribution": "Standard Commercial Freelance Contract"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Dispute Resolution",
+    "referenceText": "The parties agree to attempt good-faith informal negotiations for at least thirty (30) days before initiating formal proceedings. Any unresolved dispute shall be submitted to confidential mediation, and thereafter to binding arbitration under the Commercial Rules of the American Arbitration Association.",
+    "plainLanguageMeaning": "30 days informal talk first, followed by mediation and commercial arbitration.",
+    "commonRiskPatterns": ["Mandatory arbitration in an inconvenient distant jurisdiction", "Contractor pays all client legal fees regardless of outcome", "Forced waiver of jury trials with no mutual benefit"],
+    "sourceAttribution": "AAA Commercial Mediation & Arbitration Standard Clause"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Governing Law",
+    "referenceText": "This Agreement and any disputes arising out of it shall be governed by and construed in accordance with the laws of the State where the principal place of business of the party defending the claim is located, without regard to conflict of laws rules.",
+    "plainLanguageMeaning": "Governed by local state laws without predatory foreign jurisdiction traps.",
+    "commonRiskPatterns": ["Selection of remote foreign or distant jurisdiction requiring costly travel"],
+    "sourceAttribution": "Uniform Commercial Code Standard Terms"
+  },
+  {
+    "documentType": "freelance_services",
+    "clauseType": "Non-Compete / Non-Solicitation",
+    "referenceText": "During the term of this Agreement and for twelve (12) months thereafter, neither party shall directly recruit or solicit for employment any employee or contractor of the other party who participated in the performance of this Agreement. This does not restrict Contractor from offering services to other clients, including competitors of Client.",
+    "plainLanguageMeaning": "Neither party poaches employees. The contractor remains 100% free to work for other clients and competitors.",
+    "commonRiskPatterns": ["Broad non-compete prohibiting contractor from working in their industry", "Restrictions on working with any client in the same sector", "Excessive duration exceeding 1 year"],
+    "sourceAttribution": "Freelancers Union Balanced Non-Solicitation Standard"
+  },
+  {
+    "documentType": "residential_lease",
+    "clauseType": "Payment Terms",
+    "referenceText": "Tenant shall pay monthly rent of the agreed amount on or before the first (1st) day of each calendar month. A grace period of five (5) business days shall be granted before any late fee is assessed. Late fees shall not exceed five percent (5%) of the monthly rent or statutory maximums.",
+    "plainLanguageMeaning": "Rent is due on the 1st with a 5-day grace period. Late fees are capped at standard 5%.",
+    "commonRiskPatterns": ["Excessive daily late fees accumulating immediately on day 2", "Right to demand cash-only payments without warning", "Unclear payment processing fees"],
+    "sourceAttribution": "Uniform Residential Landlord and Tenant Act (URLTA) Model Clause"
+  },
+  {
+    "documentType": "residential_lease",
+    "clauseType": "Termination",
+    "referenceText": "Either party may terminate a month-to-month tenancy by providing at least thirty (30) days' advance written notice. For fixed-term leases, Landlord may only terminate for material non-compliance following statutory written notice to cure. Tenant may terminate without penalty if the premises become uninhabitable and Landlord fails to remedy within statutory timeframes.",
+    "plainLanguageMeaning": "30 days notice to end tenancy. Landlord cannot terminate without cause or cure notice. Tenant can exit if uninhabitable.",
+    "commonRiskPatterns": ["Unilateral right for landlord to terminate without cause", "60-90 day required tenant notice while landlord needs only 7 days", "Immediate acceleration of all remaining months' rent upon default"],
+    "sourceAttribution": "Standard Residential Tenancy Agreement"
+  },
+  {
+    "documentType": "residential_lease",
+    "clauseType": "Notice",
+    "referenceText": "Landlord or its agents may enter the leased premises only for necessary inspections, repairs, or showings to prospective tenants or buyers. Landlord must provide Tenant with at least twenty-four (24) hours' advance written notice and entry must occur during reasonable daytime hours, except in bona fide emergencies threatening life or property.",
+    "plainLanguageMeaning": "Landlord must give at least 24 hours notice before entering, during normal hours, except real emergencies.",
+    "commonRiskPatterns": ["Landlord reserves right to enter anytime without prior notice", "Excessively intrusive inspection rights with zero tenant approval", "Forced lock-box access without tenant present"],
+    "sourceAttribution": "URLTA Section 3.103 Tenant Privacy Rights"
+  },
+  {
+    "documentType": "residential_lease",
+    "clauseType": "Fees & Refunds",
+    "referenceText": "The Security Deposit shall be held in a designated escrow account in accordance with state law. Landlord shall return the full deposit to Tenant within thirty (30) days of lease termination and key return, less documented deductions for actual damage beyond ordinary wear and tear, accompanied by an itemized written statement of repair costs.",
+    "plainLanguageMeaning": "Deposit held in escrow and returned within 30 days. Deductions only for real damage, not ordinary wear and tear.",
+    "commonRiskPatterns": ["Non-refundable 'cleaning fees' disguised as deposits", "Right to forfeit entire deposit for minor administrative mistakes", "No deadline or accounting for deposit return"],
+    "sourceAttribution": "URLTA Section 2.101 Security Deposit Standards"
+  },
+  {
+    "documentType": "residential_lease",
+    "clauseType": "Warranty / Representations",
+    "referenceText": "Landlord warrants that the leased premises are habitable, structurally sound, and compliant with all applicable local health, safety, and building codes. Landlord agrees to maintain all plumbing, heating, electrical, and structural components in good working order at Landlord's sole expense throughout the lease term.",
+    "plainLanguageMeaning": "Landlord is legally responsible for keeping the home livable, safe, and up to code, paying for major repairs.",
+    "commonRiskPatterns": ["Shift of structural or plumbing maintenance costs onto tenant", "Tenant accepts home 'as-is' waiving habitability claims", "Landlord disclaims duty to fix heating or water leaks"],
+    "sourceAttribution": "Implied Warranty of Habitability Standard"
+  },
+  {
+    "documentType": "policy_tos",
+    "clauseType": "Data Use / Privacy",
+    "referenceText": "We collect and process personal data solely as necessary to operate the Service and in accordance with our Privacy Policy. We do not sell, rent, or trade your personal data to third parties for advertising or marketing purposes without your explicit affirmative opt-in consent. You retain the right to access, export, or delete your data upon request.",
+    "plainLanguageMeaning": "Your data is only used to provide the service. It is never sold to advertisers, and you can delete or export it anytime.",
+    "commonRiskPatterns": ["Broad right to sell user data or share with undisclosed affiliates", "Perpetual commercial exploitation of user content", "No user mechanism for account or data deletion"],
+    "sourceAttribution": "GDPR / CCPA Compliant Model Terms of Service"
+  },
+  {
+    "documentType": "policy_tos",
+    "clauseType": "Intellectual Property",
+    "referenceText": "You retain all intellectual property rights and ownership in the content and data you upload to the Service. By uploading content, you grant the Company a limited, worldwide, non-exclusive, royalty-free license solely to host, store, display, and process your content as required to deliver the Service to you.",
+    "plainLanguageMeaning": "You own all content you upload. The platform only has a technical license to display and host it for you.",
+    "commonRiskPatterns": ["Platform claims ownership of user generated content", "Irrevocable license allowing platform to monetize user IP without royalties", "Transfer of copyright upon upload"],
+    "sourceAttribution": "EFF Model Terms of Service for Web Applications"
+  },
+  {
+    "documentType": "policy_tos",
+    "clauseType": "Auto-Renewal",
+    "referenceText": "Paid subscriptions renew automatically at the end of each billing cycle unless cancelled prior to the renewal date. We will send written email notice at least thirty (30) days prior to any renewal involving a price change. Users may cancel auto-renewal at any time with immediate effect through their account settings without cancellation fees.",
+    "plainLanguageMeaning": "Subscriptions renew automatically, but 30 days notice is given for price increases, and you can cancel anytime online.",
+    "commonRiskPatterns": ["Difficult phone-only or mail-in cancellation requirements (dark patterns)", "Automatic annual renewal with zero notice and no refund", "Sneaky price hikes without advance warning"],
+    "sourceAttribution": "FTC 'Click to Cancel' Guidelines & Model Consumer Protection"
+  },
+  {
+    "documentType": "policy_tos",
+    "clauseType": "Amendments",
+    "referenceText": "We may update these Terms from time to time. If we make material changes, we will notify you by email or via a prominent banner on our website at least thirty (30) days before the changes take effect. If you do not agree to the modified terms, you may terminate your account and receive a pro-rata refund for unused prepaid fees.",
+    "plainLanguageMeaning": "30 days advance notice for major rule changes; if you disagree, you can leave with a refund for unused time.",
+    "commonRiskPatterns": ["Right to modify terms at any time without notice", "Continued use constitutes instant deemed acceptance of retroactive changes", "No exit or refund right upon adverse changes"],
+    "sourceAttribution": "Standard Consumer Protection Fair Terms Policy"
+  },
+  {
+    "documentType": "policy_tos",
+    "clauseType": "Dispute Resolution",
+    "referenceText": "In the event of any controversy, the parties shall first attempt to resolve the matter through good-faith informal customer dispute resolution. Any litigation shall be conducted in courts of competent jurisdiction. Nothing herein prevents either party from bringing an individual claim in small claims court.",
+    "plainLanguageMeaning": "Informal dispute talk first; small claims court rights are preserved; no forced unfair class action waiver.",
+    "commonRiskPatterns": ["Mandatory arbitration with full class action waiver and non-disclosure", "Shortened statute of limitations to 30 or 90 days", "User pays all platform legal defense costs"],
+    "sourceAttribution": "Public Citizen Fair Terms Guide"
+  }
+]

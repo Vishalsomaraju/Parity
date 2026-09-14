@@ -1,0 +1,28 @@
+{
+  "name": "parity",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Parity — Know where you stand before you sign. Legal document intelligence for non-lawyers.",
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace=backend run dev",
+    "dev:frontend": "npm --workspace=frontend run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:shared": "npm --workspace=shared run build",
+    "build:backend": "npm --workspace=backend run build",
+    "build:frontend": "npm --workspace=frontend run build",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "typecheck": "npm run --workspaces --if-present typecheck",
+    "test": "npm --workspace=backend run test && npm --workspace=frontend run test",
+    "test:coverage": "npm --workspace=backend run test:coverage",
+    "lint": "npm run --workspaces --if-present lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.2"
+  }
+}

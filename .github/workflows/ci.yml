@@ -1,0 +1,40 @@
+name: Parity CI & Quality Gates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    name: Build, Typecheck, and Test Quality Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm install
+
+      - name: Build Shared Contracts
+        run: npm run build:shared
+
+      - name: Strict Typecheck
+        run: npm run typecheck
+
+      - name: Run Core Logic Tests with Coverage Gate
+        run: npm --workspace=backend run test:coverage
+
+      - name: Build Frontend Static Bundle
+        run: npm --workspace=frontend run build
+
+      - name: Build Backend Production Engine
+        run: npm --workspace=backend run build
