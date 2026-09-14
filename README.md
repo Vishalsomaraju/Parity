@@ -70,7 +70,7 @@ This submission is built for the **AI for Legal Assistance & Access** challenge.
 - **Context-Aware Legal Benchmarks**: Clauses are scored against calibrated benchmark baselines for Employment, Leases, and SaaS Agreements.
 - **Strict Evidence Grounding**: The Q&A engine refuses to invent clauses or guess outcomes; if evidence is missing, it explicitly marks the result as `insufficient_evidence`.
 - **Qualitative Comparison Tallies**: Replaces gimmicky 100-point scores with transparent legal assessments: *"A stronger on 6 topics, B stronger on 3 topics, 5 equivalent, 2 missing protections"*.
-- **Multi-Tier Resilience**: If commercial LLMs are unavailable, Parity falls back instantly to local deterministic heuristics; if PostgreSQL or Redis are absent, it operates cleanly in Degraded Session Mode.
+- **Multi-Tier Resilience**: If commercial LLMs are unavailable, Parity falls back instantly to local deterministic heuristics; if PostgreSQL is absent, it operates cleanly in Degraded Session Mode.
 
 ---
 
@@ -139,7 +139,7 @@ See: [PERFORMANCE_REPORT.md](file:///e:/Parity/PERFORMANCE_REPORT.md) for perfor
 ## Tech Stack
 
 - **Frontend**: React 19, TypeScript, Vite, Lucide Icons, Vanilla CSS Neo-Brutalist Design System.
-- **Backend**: Node.js, Express, TypeScript, Zod, Optional Redis, PostgreSQL with `pgvector`, PDF-Parse, Mammoth.
+- **Backend**: Node.js, Express, TypeScript, Zod, PostgreSQL with `pgvector`, PDF-Parse, Mammoth.
 - **AI & Embeddings**: Google Gemini 1.5 Flash (Primary), OpenAI GPT-4o-mini (Secondary), Deterministic Heuristic Fallback Engine.
 - **Infrastructure**: Vercel (`vercel.json`), Railway (`railway.json`), Docker Compose (`docker-compose.yml`), GitHub Actions (`ci.yml`).
 
@@ -150,7 +150,7 @@ See: [PERFORMANCE_REPORT.md](file:///e:/Parity/PERFORMANCE_REPORT.md) for perfor
 ### Prerequisites
 - Node.js 20+
 - npm 9+
-- *(Optional)* Docker & Docker Compose (for local PostgreSQL + Redis)
+- *(Optional)* Docker & Docker Compose (for local PostgreSQL)
 
 ### Quick Start (Demo / Degraded Mode — No External Services Required)
 
@@ -168,10 +168,10 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser. Click **"Try Demo Documents"** to explore standard vs aggressive contract analyses immediately.
 
-### Full Production Setup (With Local PostgreSQL & Redis)
+### Full Production Setup (With Local PostgreSQL)
 
 ```bash
-# 1. Start local PostgreSQL (pgvector) and Redis
+# 1. Start local PostgreSQL (pgvector)
 docker-compose up -d
 
 # 2. Seed database benchmarks

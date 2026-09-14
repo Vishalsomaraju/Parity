@@ -71,7 +71,6 @@ DETECT (Immediate 3-second timeout or error code)
        ↓
 FALLBACK:
   • Database offline → Degraded Session Mode
-  • Redis offline → Direct Cache Bypass
   • Worker offline → Synchronous In-Process Execution
   • AI Keys missing / rate limited → Deterministic Fallback Engine
   • Demo Mode → First-class precomputed fixtures

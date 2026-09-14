@@ -70,8 +70,8 @@ As specified in the competition guidelines, core domain logic must meet or excee
   });
   ```
 
-### 3.3 Degraded Database & Cache Handling
-- **Requirement**: When PostgreSQL and Redis are absent, the application must operate cleanly in Degraded Session Mode without throwing unhandled connection rejections.
+### 3.3 Degraded Database Handling
+- **Requirement**: When PostgreSQL is absent, the application must operate cleanly in Degraded Session Mode without throwing unhandled connection rejections.
 - **Verification**: Verified via `connection.ts` and `processingQueue.ts` in all unit tests running without a live database daemon.
 
 ---

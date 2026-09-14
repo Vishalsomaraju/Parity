@@ -7,7 +7,6 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string().default('postgresql://postgres:postgres@localhost:5433/parity'),
-  REDIS_URL: z.string().default('redis://localhost:6380'),
   SIMILARITY_THRESHOLD: z.coerce.number().min(0).max(1).default(0.65),
   // Primary AI: Google Gemini
   GEMINI_API_KEY: z.string().optional().default(''),

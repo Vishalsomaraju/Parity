@@ -74,7 +74,6 @@ UPLOAD / SELECT DEMO
 ## 8. Fallback & Survival Behavior
 
 - **PostgreSQL Offline**: Parity gracefully transitions to **Degraded Session Mode** (transient session store, no crash).
-- **Redis Offline**: Cache bypass occurs transparently with zero disruption.
 - **LLM / API Keys Missing**: 2-provider chain falls back from Gemini to OpenAI to deterministic heuristic analysis.
 - **Worker Detached**: Background processing gracefully switches to synchronous in-process execution.
 - **First-Class Demo Mode**: 100% precomputed fixtures enable judges to evaluate the complete product with zero external network or database dependencies.

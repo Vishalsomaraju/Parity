@@ -43,7 +43,6 @@ router.get('/health', (req: Request, res: Response) => {
     environment: config.NODE_ENV,
     services: {
       database: degraded ? 'session_fallback' : 'connected',
-      redis: 'bypassed',
       ai: config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none'
         ? 'primary_active'
         : config.OPENAI_API_KEY

@@ -28,7 +28,6 @@ export interface HealthResponse {
   environment: string;
   services: {
     database: 'connected' | 'session_fallback';
-    redis: 'connected' | 'bypassed';
     ai: 'primary_active' | 'secondary_active' | 'deterministic_fallback';
     worker: 'background_active' | 'in_process_fallback';
   };

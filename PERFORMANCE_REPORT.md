@@ -90,7 +90,7 @@ Parity defines clear degradation paths so that server resource constraints do no
 | Component | Normal Operational Mode | Degraded / Survival Mode | Latency Impact |
 | :--- | :--- | :--- | :--- |
 | **Database** | PostgreSQL + pgvector vector search | In-memory session store (`connection.ts`) | Reduced from 12ms to < 1ms |
-| **Worker Queue** | Redis + BullMQ asynchronous workers | Synchronous direct pipeline execution | Immediate processing in request context |
+| **Worker Queue** | Background processing worker | Synchronous direct pipeline execution | Immediate processing in request context |
 | **LLM Inference** | Gemini 1.5 Flash / OpenAI GPT-4o-mini | Deterministic heuristic rules engine | Reduced from ~1200ms to < 1ms |
 | **Demo Requests** | Backend API query | Client-side static fixtures (`demoFixtures.ts`) | **0 ms** (offline instant) |
 

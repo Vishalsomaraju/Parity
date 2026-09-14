@@ -150,7 +150,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
           <div style={{ backgroundColor: 'var(--bg-app)', padding: '16px', borderRadius: '6px', border: '1px solid var(--border-dark-subtle)' }}>
             <div style={{ fontWeight: 700, color: '#fff', fontSize: '13px', marginBottom: '6px' }}>Zero-Dependency Demo</div>
             <div style={{ fontSize: '12px', color: 'var(--text-secondary-dark)' }}>
-              Instant precomputed fixtures run 100% offline without database, Redis, or API keys.
+              Instant precomputed fixtures run 100% offline without database, cloud worker, or API keys.
             </div>
           </div>
         </div>
