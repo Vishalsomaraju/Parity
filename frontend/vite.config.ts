@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@parity/shared': path.resolve(__dirname, '../shared/src/index.ts'),
+      '@parity/shared': path.resolve(__dirname, '../shared/src/types-index.ts'),
     },
   },
   server: {
@@ -29,11 +29,18 @@ export default defineConfig({
     sourcemap: false,
     cssMinify: true,
     minify: 'esbuild',
+    modulePreload: { polyfill: false },
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
+        manualChunks: (id) => {
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/scheduler/')
+          ) {
+            return 'vendor-react';
+          }
         },
       },
     },

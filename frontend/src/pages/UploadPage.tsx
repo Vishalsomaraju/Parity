@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { DocumentType, Document } from '@parity/shared';
+import { DocumentType } from '@parity/shared';
+import type { Document } from '@parity/shared';
 import { apiUrl } from '../config';
 
 interface UploadPageProps {

@@ -19,23 +19,68 @@
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=optional"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
     />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=optional"
-      media="print"
-      onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
     />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=optional"
-      />
-    </noscript>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="app-shell" style="display: flex; flex-direction: column; min-height: 100vh;">
+        <aside class="disclaimer-banner" role="note" aria-label="Legal Disclaimer">
+          <span aria-hidden="true">⚖️</span>
+          <span>PARITY LEGAL DISCLOSURE: Parity provides AI-assisted contract comprehension, pattern identification, and risk indicators for informational purposes only. Parity is not an attorney, law firm, or legal services provider. Parity cannot provide legal advice, legal opinions, or statutory enforceability determinations. Always consult licensed legal counsel before signing binding legal agreements.</span>
+        </aside>
+        <header class="app-header" role="banner">
+          <div class="brand-title" role="button" tabindex="0" style="cursor: pointer;" title="Parity Home — Upload Document">
+            <div class="brand-logo-mark" aria-hidden="true">§</div>
+            <div>
+              <span class="brand-name">PARITY</span>
+            </div>
+            <span class="brand-tagline">Know where you stand before you sign.</span>
+          </div>
+          <nav class="nav-links" aria-label="Main Navigation">
+            <button class="nav-btn active">Upload Document</button>
+            <button class="nav-btn">Results</button>
+            <button class="nav-btn">Compare Contracts</button>
+            <button class="nav-btn">How It Works</button>
+            <button class="nav-btn">Legal &amp; Licensing</button>
+            <button class="cta-btn-primary" title="Instant 1-click interactive demo">Try Demo →</button>
+          </nav>
+        </header>
+        <div style="flex: 1;">
+          <main style="max-width: 880px; margin: 36px auto; padding: 0 24px 64px;">
+            <header style="margin-bottom: 32px; text-align: center;">
+              <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                <span class="badge badge-demo" style="font-size: 12px; padding: 6px 14px;">§ AI for Legal Assistance &amp; Access</span>
+              </div>
+              <h1 style="font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 12px; font-family: var(--font-sans);">Upload Legal Document</h1>
+              <p style="color: var(--text-secondary-dark); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6;">
+                Know where you stand before you sign. Upload a contract (PDF, DOCX, or TXT) to translate fine print, highlight hidden risks, extract obligations, and map timelines.
+              </p>
+            </header>
+            <section class="inspector-card" style="padding: 36px; margin-bottom: 36px; background-color: var(--bg-surface-dark); border: 1px solid var(--border-dark);">
+              <div style="margin-bottom: 24px;">
+                <label for="doc-type-select" style="display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 8px;">DOCUMENT CATEGORY:</label>
+                <select id="doc-type-select" style="width: 100%; background-color: var(--bg-surface-elevated); border: 1px solid var(--border-dark); border-radius: 4px; padding: 12px 14px; color: #fff; font-size: 14px;">
+                  <option value="freelance_services">Freelance / Contractor Services Agreement</option>
+                  <option value="residential_lease">Residential Lease Agreement</option>
+                  <option value="policy_tos">Terms of Service / Privacy Policy</option>
+                </select>
+              </div>
+              <div style="border: 2px dashed var(--border-dark); border-radius: 6px; padding: 36px; text-align: center; background-color: var(--bg-app); margin-bottom: 24px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">📄</div>
+                <label class="nav-btn" style="display: inline-block; background-color: var(--bg-surface-elevated); border-color: var(--border-dark); color: #fff; cursor: pointer; padding: 12px 24px; font-size: 14px; font-weight: 600;">Choose PDF, DOCX, or TXT File</label>
+                <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted-dark);">Max file size 15 MB · In-memory ephemeral processing · Zero persistent storage</div>
+              </div>
+              <button class="cta-btn-primary" style="width: 100%; padding: 14px; font-size: 15px;" disabled>Start Document Analysis →</button>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

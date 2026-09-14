@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Document, Clause, QAResponse } from '@parity/shared';
+import React, { useState, useEffect } from 'react';
+import type { Document, Clause, QAResponse } from '@parity/shared';
 import { DocumentViewer } from '../components/document/DocumentViewer';
 import { ParityInspector } from '../components/inspector/ParityInspector';
 import { RiskBadge } from '../components/document/RiskBadge';
@@ -20,6 +20,17 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
   onNavigateUpload,
 }) => {
   const [selectedClause, setSelectedClause] = useState<Clause | null>(clauses[0] || null);
+
+  useEffect(() => {
+    // Lazily inject Lora serif font only when entering document workspace
+    if (!window.document.getElementById('font-lora')) {
+      const link = window.document.createElement('link');
+      link.id = 'font-lora';
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400&display=swap';
+      window.document.head.appendChild(link);
+    }
+  }, []);
 
   const handleSelectClause = (clause: Clause) => {
     setSelectedClause(clause);

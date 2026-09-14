@@ -1,5 +1,5 @@
-import React, { useState, Suspense, lazy } from 'react';
-import { Document, Clause, QAResponse } from '@parity/shared';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import type { Document, Clause, QAResponse } from '@parity/shared';
 import { AppHeader } from './components/layout/AppHeader';
 import { AppFooter } from './components/layout/AppFooter';
 import { DisclaimerBanner } from './components/layout/DisclaimerBanner';
@@ -28,6 +28,22 @@ export const App: React.FC = () => {
   const [activeDocument, setActiveDocument] = useState<Document | null>(null);
   const [activeClauses, setActiveClauses] = useState<Clause[]>([]);
   const [demoQAMap, setDemoQAMap] = useState<Record<string, QAResponse>>({});
+
+  // Background warm-up via requestIdleCallback after initial paint
+  useEffect(() => {
+    const idleCallback =
+      (window as any).requestIdleCallback ||
+      ((cb: () => void) => setTimeout(cb, 1500));
+    const handle = idleCallback(() => {
+      import('./pages/WorkspacePage');
+      import('./data/demoFixtures');
+    });
+    return () => {
+      if ((window as any).cancelIdleCallback) {
+        (window as any).cancelIdleCallback(handle);
+      }
+    };
+  }, []);
 
   const handleLaunchDemo = async () => {
     const { DEMO_FREELANCE_STANDARD, DEMO_QA_MAP } = await import('./data/demoFixtures');
