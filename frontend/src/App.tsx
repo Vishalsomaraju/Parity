@@ -1,44 +1,56 @@
-import React, { useState } from 'react';
-import { Document, Clause } from '@parity/shared';
+import React, { useState, Suspense, lazy } from 'react';
+import { Document, Clause, QAResponse } from '@parity/shared';
 import { AppHeader } from './components/layout/AppHeader';
 import { AppFooter } from './components/layout/AppFooter';
 import { DisclaimerBanner } from './components/layout/DisclaimerBanner';
 import { UploadPage } from './pages/UploadPage';
-import { WorkspacePage } from './pages/WorkspacePage';
-import { ComparePage } from './pages/ComparePage';
-import { HowItWorksPage } from './pages/HowItWorksPage';
-import { LegalLicensingPage } from './pages/LegalLicensingPage';
-import {
-  DEMO_FREELANCE_STANDARD,
-  DEMO_FREELANCE_AGGRESSIVE,
-  DEMO_QA_MAP,
-} from './data/demoFixtures';
 import { apiUrl } from './config';
+
+// Lazy-load non-root pages to drastically reduce initial JS bundle & accelerate FCP/LCP
+const WorkspacePage = lazy(() =>
+  import('./pages/WorkspacePage').then((m) => ({ default: m.WorkspacePage }))
+);
+const ComparePage = lazy(() =>
+  import('./pages/ComparePage').then((m) => ({ default: m.ComparePage }))
+);
+const HowItWorksPage = lazy(() =>
+  import('./pages/HowItWorksPage').then((m) => ({ default: m.HowItWorksPage }))
+);
+const LegalLicensingPage = lazy(() =>
+  import('./pages/LegalLicensingPage').then((m) => ({ default: m.LegalLicensingPage }))
+);
 
 export type AppView = 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal';
 
 export const App: React.FC = () => {
   // Root view is directly the Upload Document interface
   const [currentView, setCurrentView] = useState<AppView>('upload');
-  const [activeDocument, setActiveDocument] = useState<Document>(DEMO_FREELANCE_STANDARD.document);
-  const [activeClauses, setActiveClauses] = useState<Clause[]>(DEMO_FREELANCE_STANDARD.clauses);
+  const [activeDocument, setActiveDocument] = useState<Document | null>(null);
+  const [activeClauses, setActiveClauses] = useState<Clause[]>([]);
+  const [demoQAMap, setDemoQAMap] = useState<Record<string, QAResponse>>({});
 
-  const handleLaunchDemo = () => {
+  const handleLaunchDemo = async () => {
+    const { DEMO_FREELANCE_STANDARD, DEMO_QA_MAP } = await import('./data/demoFixtures');
     setActiveDocument(DEMO_FREELANCE_STANDARD.document);
     setActiveClauses(DEMO_FREELANCE_STANDARD.clauses);
+    setDemoQAMap(DEMO_QA_MAP);
     setCurrentView('workspace');
   };
 
   const handleSelectDocument = async (docId: string) => {
     if (docId === 'demo_freelance_standard') {
+      const { DEMO_FREELANCE_STANDARD, DEMO_QA_MAP } = await import('./data/demoFixtures');
       setActiveDocument(DEMO_FREELANCE_STANDARD.document);
       setActiveClauses(DEMO_FREELANCE_STANDARD.clauses);
+      setDemoQAMap(DEMO_QA_MAP);
       setCurrentView('workspace');
       return;
     }
     if (docId === 'demo_freelance_aggressive') {
+      const { DEMO_FREELANCE_AGGRESSIVE, DEMO_QA_MAP } = await import('./data/demoFixtures');
       setActiveDocument(DEMO_FREELANCE_AGGRESSIVE.document);
       setActiveClauses(DEMO_FREELANCE_AGGRESSIVE.clauses);
+      setDemoQAMap(DEMO_QA_MAP);
       setCurrentView('workspace');
       return;
     }
@@ -85,39 +97,65 @@ export const App: React.FC = () => {
       />
 
       <div style={{ flex: 1 }}>
-        {currentView === 'upload' && (
-          <UploadPage
-            onDocumentProcessed={handleDocumentProcessed}
-            onLoadSample={(key) => handleSelectDocument(key)}
-          />
-        )}
+        <Suspense
+          fallback={
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '50vh',
+                color: 'var(--text-secondary-dark)',
+                fontSize: '14px',
+              }}
+            >
+              Loading view...
+            </div>
+          }
+        >
+          {currentView === 'upload' && (
+            <UploadPage
+              onDocumentProcessed={handleDocumentProcessed}
+              onLoadSample={(key) => handleSelectDocument(key)}
+            />
+          )}
 
-        {currentView === 'workspace' && (
-          <WorkspacePage
-            document={activeDocument}
-            clauses={activeClauses}
-            demoQAMap={DEMO_QA_MAP}
-            onSwitchDocument={handleSelectDocument}
-            onNavigateUpload={() => setCurrentView('upload')}
-          />
-        )}
+          {currentView === 'workspace' && activeDocument && (
+            <WorkspacePage
+              document={activeDocument}
+              clauses={activeClauses}
+              demoQAMap={demoQAMap}
+              onSwitchDocument={handleSelectDocument}
+              onNavigateUpload={() => setCurrentView('upload')}
+            />
+          )}
 
-        {currentView === 'compare' && <ComparePage />}
+          {currentView === 'workspace' && !activeDocument && (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary-dark)' }}>
+              <p style={{ marginBottom: '16px' }}>No document is currently active.</p>
+              <button className="cta-btn-primary" onClick={() => setCurrentView('upload')}>
+                Upload a Document →
+              </button>
+            </div>
+          )}
 
-        {currentView === 'how-it-works' && (
-          <HowItWorksPage
-            onOpenUpload={() => setCurrentView('upload')}
-            onOpenCompare={() => setCurrentView('compare')}
-            onStartDemo={handleLaunchDemo}
-          />
-        )}
+          {currentView === 'compare' && <ComparePage />}
 
-        {currentView === 'legal' && (
-          <LegalLicensingPage
-            onOpenUpload={() => setCurrentView('upload')}
-            onOpenCompare={() => setCurrentView('compare')}
-          />
-        )}
+          {currentView === 'how-it-works' && (
+            <HowItWorksPage
+              onOpenUpload={() => setCurrentView('upload')}
+              onOpenCompare={() => setCurrentView('compare')}
+              onStartDemo={handleLaunchDemo}
+            />
+          )}
+
+          {currentView === 'legal' && (
+            <LegalLicensingPage
+              onOpenUpload={() => setCurrentView('upload')}
+              onOpenCompare={() => setCurrentView('compare')}
+            />
+          )}
+        </Suspense>
       </div>
 
       <AppFooter
