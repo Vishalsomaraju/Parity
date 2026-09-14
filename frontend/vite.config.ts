@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@parity/shared': path.resolve(__dirname, '../shared/src/types-index.ts'),
+      '@parity/shared': path.resolve(__dirname, '../shared/src/index.ts'),
     },
   },
   server: {
