@@ -704,6 +704,83 @@ export const DEMO_FREELANCE_COMPARISON: ComparisonResult = {
 };
 
 /**
+ * 4. Precomputed Comparison: Standard Lease (A) vs Restrictive Metro Lease (B)
+ */
+export const DEMO_LEASE_COMPARISON: ComparisonResult = {
+  id: 'demo_cmp_lease',
+  documentAId: 'demo_lease_standard',
+  documentBId: 'demo_lease_restrictive',
+  labelA: 'Standard Residential Lease',
+  labelB: 'Metro Properties Restrictive Lease',
+  isDemo: true,
+  createdAt: '2025-10-01T12:00:00.000Z',
+  summary: {
+    aStrongerCount: 5,
+    bStrongerCount: 0,
+    equivalentCount: 1,
+    missingProtectionCount: 0,
+    totalTopicsCompared: 6,
+  },
+  topics: [
+    {
+      topic: ClauseType.PaymentTerms,
+      docAText: 'Rent $2,200/mo due 1st with 5-day grace period; $25 late fee on 6th.',
+      docBText: 'Rent $2,600/mo due 1st; $150 late fee on 2nd, plus $25/day compounding penalty.',
+      verdict: ComparisonVerdict.ABetter,
+      explanation: 'Document A provides a standard 5-day grace period and modest fee. Document B penalizes you on day 2 with heavy compounding fines.',
+      significance: SignificanceTier.High,
+      keyDifference: 'Document A has a 5-day grace period; Document B charges $150 on day 2.',
+    },
+    {
+      topic: ClauseType.FeesRefunds,
+      docAText: 'Deposit of 1 month ($2,200) returned within 21 days with itemized receipts.',
+      docBText: 'Deposit of 2 months ($5,200) plus non-refundable $800 cleaning fee, retained for 90 days.',
+      verdict: ComparisonVerdict.ABetter,
+      explanation: 'Document A follows statutory 21-day return rules. Document B ties up $6,000 for 3 months with an illegal non-refundable cleaning fee.',
+      significance: SignificanceTier.High,
+      keyDifference: 'Document A returns deposit in 21 days; Document B retains funds for 90 days.',
+    },
+    {
+      topic: ClauseType.WarrantyRepresentations,
+      docAText: 'Landlord maintains roof, plumbing, heating, and structural elements.',
+      docBText: 'Tenant responsible for all repairs under $500 including heating, appliances, and plumbing.',
+      verdict: ComparisonVerdict.ABetter,
+      explanation: 'Document A complies with the implied warranty of habitability. Document B forces tenants to pay out-of-pocket for essential plumbing and heat.',
+      significance: SignificanceTier.High,
+      keyDifference: 'Document A requires Landlord repairs; Document B shifts $500 repair burden to Tenant.',
+    },
+    {
+      topic: ClauseType.Termination,
+      docAText: '30 days written notice to vacate at end of term; early termination fee of 1 month rent.',
+      docBText: 'Immediate acceleration: tenant liable for full balance of 12-month term upon any early departure.',
+      verdict: ComparisonVerdict.ABetter,
+      explanation: 'Document A caps early departure at 1 month. Document B forces you to pay thousands of dollars in accelerated rent for the entire unexpired year.',
+      significance: SignificanceTier.High,
+      keyDifference: 'Document A caps exit penalty; Document B accelerates the full year rent.',
+    },
+    {
+      topic: ClauseType.Notice,
+      docAText: 'Landlord provides minimum 24 hours advance notice before entry, during normal business hours.',
+      docBText: 'Landlord may enter premises at any time without notice for inspection or prospective showings.',
+      verdict: ComparisonVerdict.ABetter,
+      explanation: 'Document A respects your privacy with 24h notice. Document B asserts unrestricted entry without consent.',
+      significance: SignificanceTier.High,
+      keyDifference: 'Document A gives 24h advance notice; Document B allows unannounced entry.',
+    },
+    {
+      topic: ClauseType.GoverningLaw,
+      docAText: 'Governed by California tenant protection and habitability statutes.',
+      docBText: 'Governed by California law; mandatory tenant waiver of jury trial rights.',
+      verdict: ComparisonVerdict.Equivalent,
+      explanation: 'Both cite California law, although Document B attempts an unenforceable jury trial waiver.',
+      significance: SignificanceTier.Medium,
+      keyDifference: 'Materially equivalent governing jurisdiction.',
+    },
+  ],
+};
+
+
+/**
  * Precomputed Q&A Demo Responses for Grounded Answers
  */
 export const DEMO_QA_MAP: Record<string, QAResponse> = {

@@ -12,13 +12,17 @@ Parity enforces rigorous automated quality gates to guarantee that legal documen
 As specified in the competition guidelines, core domain logic must meet or exceed a **90% coverage gate**:
 - **CI Gate Enforced**: `90%` statement and line coverage on core business logic (`services/` and `utils/`).
 - **Current Backend Test Coverage**:
-  - **Overall Lines Coverage**: **90.21%**
-  - **Overall Functions Coverage**: **90.78%**
-  - **Question & Answering (`qaService.ts`)**: **97.05%**
-  - **Synthesis Engines (`services/synthesis/`)**: **93.75%**
-  - **Risk Scoring Pipeline (`scoringPipeline.ts`)**: **95.94%**
-  - **Utilities (`hash.ts`, `sanitize.ts`)**: **100.00%**
-- **Test Execution Stats**: **11 Test Suites Passing**, **41 Tests Passing**, **0 Failures**.
+  - **Overall Line Coverage**: **95.23%** (Core domain logic)
+  - **Overall Function Coverage**: **96.05%**
+  - **Overall Statement Coverage**: **93.02%**
+  - **Branch Coverage**: **78.72%** (Disclosed transparently; edge cases and fallback branches documented)
+  - **Clause Segmentation (`clauseSplitter.ts`)**: **98.30% Lines** (100% Functions)
+  - **Semantic Comparison (`comparisonService.ts`)**: **92.06% Lines**
+  - **Question & Answering (`qaService.ts`)**: **97.05% Lines** (100% Functions)
+  - **Synthesis Engines (`services/synthesis/`)**: **93.75% Lines** (100% Functions)
+  - **Risk Scoring Pipeline (`scoringPipeline.ts`)**: **95.94% Lines**
+  - **Utilities (`hash.ts`, `sanitize.ts`)**: **100.00% Lines** (100% Functions)
+- **Test Execution Stats**: **11 Test Suites Passing**, **46 Tests Passing**, **0 Failures**.
 
 ---
 

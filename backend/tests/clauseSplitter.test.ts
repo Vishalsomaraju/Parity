@@ -50,4 +50,20 @@ This is the third paragraph detailing what happens if either party terminates th
     const clauses = await splitDocumentIntoClauses(rawParagraphs, DocumentType.FreelanceServices);
     expect(clauses.length).toBeGreaterThanOrEqual(3);
   });
+
+  it('handles single-line text with zero paragraph breaks', () => {
+    const singleLine = 'This is a brief one line agreement.';
+    const clauses = splitByRegex(singleLine);
+    expect(clauses.length).toBe(1);
+    expect(clauses[0].sectionTitle).toBe('Full Agreement');
+    expect(clauses[0].clauseType).toBe(ClauseType.General);
+  });
+
+  it('triggers boundary fallback when fewer than 3 sections exist', async () => {
+    const shortDoc = '1. SCOPE\nContractor will design the website.\n\n2. PAYMENT\nPay $500.';
+    const clauses = await splitDocumentIntoClauses(shortDoc, DocumentType.FreelanceServices);
+    expect(clauses.length).toBeGreaterThanOrEqual(1);
+    expect(clauses[0].clauseText).toBeDefined();
+  });
 });
+

@@ -334,10 +334,24 @@ a:hover {
   width: 100%;
   padding: 56px 64px;
   border: 1px solid var(--border-paper);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 12px 36px -4px rgba(0, 0, 0, 0.45);
   font-family: var(--font-serif);
   line-height: 1.8;
   position: relative;
+}
+
+.legal-document-paper::after {
+  content: 'PARITY LEGAL ARCHIVE · INK-ON-PAPER RECORD';
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #a8a29e;
+  letter-spacing: 1.5px;
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--border-paper);
 }
 
 .paper-header {
@@ -363,33 +377,37 @@ a:hover {
 }
 
 .clause-block {
-  margin-bottom: 28px;
-  padding: 12px 16px 12px 20px;
+  margin-bottom: 24px;
+  padding: 14px 18px 14px 20px;
   position: relative;
   border-left: 3px solid transparent;
-  transition: all 0.2s ease;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .clause-block:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: rgba(0, 0, 0, 0.025);
 }
 
 .clause-block.selected {
-  background-color: rgba(194, 157, 89, 0.08);
+  background-color: rgba(194, 157, 89, 0.09);
   border-left-color: var(--accent-gold);
 }
 
+/* Subtle, editorial risk annotations (never giant loud boxes) */
 .clause-block.risk-RedFlag {
-  border-left-color: var(--risk-flag);
+  border-left: 4px solid var(--risk-flag);
+  background-color: rgba(220, 38, 38, 0.025);
 }
 
 .clause-block.risk-WorthASecondLook {
-  border-left-color: var(--risk-caution);
+  border-left: 3px solid var(--risk-caution);
+  background-color: rgba(217, 119, 6, 0.02);
 }
 
 .clause-block.risk-Fair {
-  border-left-color: var(--risk-fair);
+  border-left: 2px solid rgba(46, 125, 50, 0.35);
 }
 
 .clause-header-row {
@@ -592,6 +610,43 @@ a:hover {
   gap: 16px;
 }
 
+/* Tablet & Mobile Responsive Breakpoints */
+@media (max-width: 992px) {
+  .topic-compare-grid {
+    grid-template-columns: 1fr;
+  }
+  .topic-doc-column + .topic-doc-column {
+    border-left: none !important;
+    border-top: 1px solid var(--border-dark);
+  }
+  .compare-scorecard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .zone-document {
+    padding: 24px 16px;
+  }
+  .legal-document-paper {
+    padding: 36px 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .compare-scorecard {
+    grid-template-columns: 1fr;
+  }
+  .legal-document-paper {
+    padding: 24px 16px;
+  }
+  .app-header {
+    padding: 0 14px;
+  }
+  .topic-verdict-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -603,3 +658,4 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+

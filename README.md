@@ -3,7 +3,7 @@
 > Know where you stand before you sign.
 
 [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](#)
-[![Coverage](https://img.shields.io/badge/coverage-90.21%25-brightgreen)](#)
+[![Coverage](https://img.shields.io/badge/coverage-95.23%25%20lines-brightgreen)](#)
 [![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-brightgreen)](#)
 [![Security](https://img.shields.io/badge/security-server--side%20AI-blue)](#)
 
@@ -105,8 +105,8 @@ See: [SECURITY.md](file:///e:/Parity/SECURITY.md) for complete threat modeling a
 
 ## Testing Summary
 
-- **Coverage Gate**: Enforces `>= 90%` lines coverage in CI across all core domain logic.
-- **Current Status**: **90.21% Lines Coverage**, **90.78% Functions Coverage**, **11/11 Test Suites Passing**, **41/41 Tests Passing**.
+- **Coverage Gate**: Enforces `>= 90%` line coverage in CI across all core domain logic.
+- **Current Status**: **95.23% Line Coverage** (78.72% branch, 96.05% function, 93.02% statement), **11/11 Test Suites Passing**, **46/46 Tests Passing**.
 - **Edge Cases Tested**: AI provider failures, fallback triggers, prompt injection vectors, empty files, malformed archives, missing benchmark vectors, and Q&A insufficient-evidence states.
 
 See: [TESTING_STRATEGY.md](file:///e:/Parity/TESTING_STRATEGY.md) for test matrices and verification commands.

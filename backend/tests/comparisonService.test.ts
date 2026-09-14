@@ -64,4 +64,27 @@ describe('Document Comparison Module', () => {
     expect(comparison.summary.missingProtectionCount).toBeGreaterThan(0);
     expect(comparison.summary.totalTopicsCompared).toBe(comparison.topics.length);
   });
+
+  it('detects when Document B is better because Document A has predatory terms', () => {
+    const textA = 'Contractor assumes unlimited liability and agrees to non-compete for 5 years without notice.';
+    const textB = 'Liability is limited to fees paid under this agreement.';
+    const result = evaluateTopicHeuristically(ClauseType.LimitationOfLiability, textA, textB);
+    expect(result.verdict).toBe(ComparisonVerdict.BBetter);
+    expect(result.significance).toBe(SignificanceTier.High);
+  });
+
+  it('evaluates identical or neutral terms as equivalent', () => {
+    const textA = 'Governing law shall be the State of California.';
+    const textB = 'Governing law shall be the State of California.';
+    const result = evaluateTopicHeuristically(ClauseType.GoverningLaw, textA, textB);
+    expect(result.verdict).toBe(ComparisonVerdict.Equivalent);
+    expect(result.significance).toBe(SignificanceTier.Low);
+  });
+
+  it('defaults to General topic when comparing empty documents', async () => {
+    const comparison = await compareDocuments([], [], 'emptyA', 'emptyB');
+    expect(comparison.topics.length).toBe(1);
+    expect(comparison.topics[0].topic).toBe(ClauseType.General);
+  });
 });
+

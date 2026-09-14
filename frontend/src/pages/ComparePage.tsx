@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ComparisonResult } from '@parity/shared';
 import { SemanticCompareMatrix } from '../components/compare/SemanticCompareMatrix';
-import { DEMO_FREELANCE_COMPARISON } from '../data/demoFixtures';
+import { DEMO_FREELANCE_COMPARISON, DEMO_LEASE_COMPARISON } from '../data/demoFixtures';
 
 interface ComparePageProps {
   initialComparison?: ComparisonResult;
@@ -34,6 +34,12 @@ export const ComparePage: React.FC<ComparePageProps> = ({
           onClick={() => setActiveComparison(DEMO_FREELANCE_COMPARISON)}
         >
           Freelance: Standard vs Omnicorp Aggressive
+        </button>
+        <button
+          className={`nav-btn ${activeComparison.id === 'demo_cmp_lease' ? 'active' : ''}`}
+          onClick={() => setActiveComparison(DEMO_LEASE_COMPARISON)}
+        >
+          Residential Lease: Standard vs Metro Restrictive
         </button>
       </div>
 

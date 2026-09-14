@@ -11,7 +11,7 @@ const EnvSchema = z.object({
   SIMILARITY_THRESHOLD: z.coerce.number().min(0).max(1).default(0.65),
   // Primary AI: Google Gemini
   GEMINI_API_KEY: z.string().optional().default(''),
-  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  GEMINI_MODEL: z.string().default('gemini-1.5-flash'),
   // Secondary AI: OpenAI
   OPENAI_API_KEY: z.string().optional().default(''),
   OPENAI_BASE_URL: z.string().default('https://api.openai.com/v1'),
