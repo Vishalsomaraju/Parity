@@ -5,11 +5,11 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "build": "cd ../shared && npm install --ignore-scripts && npm run build && cd ../backend && tsc",
     "start": "node dist/server.js",
     "test": "jest --passWithNoTests",
     "test:coverage": "jest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "cd ../shared && npm install --ignore-scripts && npm run build && cd ../backend && tsc --noEmit"
   },
   "dependencies": {
     "@parity/shared": "*",

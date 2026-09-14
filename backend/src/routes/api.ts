@@ -7,9 +7,8 @@ import {
   ProcessingStatus,
   CompareRequestSchema,
   QARequestSchema,
-  HealthResponse,
 } from '@parity/shared';
-import { query, queryOne, isDegradedMode } from '../db/connection';
+import { query, queryOne } from '../db/connection';
 import {
   dispatchDocumentProcessing,
   getJobProgress,
@@ -74,34 +73,13 @@ const handleUploadMiddleware = (req: Request, res: Response, next: express.NextF
   });
 };
 
-const startTime = Date.now();
-
 /**
  * GET /api/health
- * Deterministic, fast health check for Railway / load balancers
+ * Minimal, fast health check for Render / load balancers.
+ * Must return quickly with no AI calls, no DB queries, no internal details.
  */
-router.get('/health', (req: Request, res: Response) => {
-  const config = getConfig();
-  const degraded = isDegradedMode();
-
-  const response: HealthResponse = {
-    status: degraded ? 'degraded' : 'healthy',
-    version: '1.0.0',
-    uptimeSeconds: Math.floor((Date.now() - startTime) / 1000),
-    environment: config.NODE_ENV,
-    services: {
-      database: degraded ? 'session_fallback' : 'connected',
-      ai:
-        config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none'
-          ? 'primary_active'
-          : config.OPENAI_API_KEY
-          ? 'secondary_active'
-          : 'deterministic_fallback',
-      worker: config.ENABLE_WORKER ? 'background_active' : 'in_process_fallback',
-    },
-  };
-
-  res.json(response);
+router.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok' });
 });
 
 /**
