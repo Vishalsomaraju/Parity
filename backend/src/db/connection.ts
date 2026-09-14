@@ -133,6 +133,7 @@ export function getPool(): Pool {
     const isSsl =
       config.NODE_ENV === 'production' ||
       config.DATABASE_URL.includes('sslmode=') ||
+      config.DATABASE_URL.includes('railway') ||
       config.DATABASE_URL.includes('render.com') ||
       config.DATABASE_URL.includes('neon.tech') ||
       config.DATABASE_URL.includes('supabase');
@@ -157,6 +158,9 @@ export function getPool(): Pool {
  * Check whether database is operating in degraded session mode
  */
 export function isDegradedMode(): boolean {
+  if (getConfig().NODE_ENV === 'production') {
+    return false;
+  }
   return isDegradedSessionMode;
 }
 
@@ -173,11 +177,14 @@ export async function closePool(): Promise<void> {
 /**
  * Resilient query executor:
  * Runs parameterized SQL on PostgreSQL.
- * If PostgreSQL is unreachable, transparently transitions to degraded session mode
- * and logs an honest warning.
+ * If PostgreSQL is unreachable:
+ * - In production: throws an error immediately (no silent fallback).
+ * - In development/test: transparently transitions to degraded session mode.
  */
 export async function query<T>(text: string, params: unknown[] = []): Promise<T[]> {
-  if (isDegradedSessionMode) {
+  const config = getConfig();
+
+  if (isDegradedSessionMode && config.NODE_ENV !== 'production') {
     return handleDegradedSessionQuery<T>(text, params);
   }
 
@@ -186,6 +193,11 @@ export async function query<T>(text: string, params: unknown[] = []): Promise<T[
     const result = await client.query(text, params);
     return result.rows as T[];
   } catch (err: any) {
+    if (config.NODE_ENV === 'production') {
+      console.error('[DB] PostgreSQL query failed in production:', err.message);
+      throw new Error('Database query failed: Production requires an active, healthy PostgreSQL connection.');
+    }
+
     const msg = err?.message || '';
     const code = err?.code || '';
     if (

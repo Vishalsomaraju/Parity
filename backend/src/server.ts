@@ -34,6 +34,10 @@ export async function startServer(): Promise<any> {
     await runMigrations();
     await seedBenchmarks();
   } catch (err: any) {
+    if (config.NODE_ENV === 'production') {
+      console.error('[Server] Fatal: Database initialization failed in production mode.');
+      throw new Error('Database initialization failed: DATABASE_URL is required and must be reachable in production.');
+    }
     console.warn('[Server] DB startup notice:', err.message);
   }
 

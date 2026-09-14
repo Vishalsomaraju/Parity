@@ -70,10 +70,39 @@ DEPENDENCY OUTAGE
 DETECT (Immediate 3-second timeout or error code)
        ↓
 FALLBACK:
-  • Database offline → Degraded Session Mode
+  • Database offline → Degraded Session Mode (local dev/test) / Fail-safe Startup (production)
   • Worker offline → Synchronous In-Process Execution
   • AI Keys missing / rate limited → Deterministic Fallback Engine
   • Demo Mode → First-class precomputed fixtures
        ↓
 USER REMAINS IN FULL CONTROL (No crashes, no unhandled rejections)
 ```
+
+---
+
+## 5. Production Deployment Topology
+
+```text
+                    ┌────────────────────────┐
+                    │     Vercel Edge        │
+                    │   Frontend (SPA)       │
+                    └───────────┬────────────┘
+                                │ HTTPS / REST API
+                                ▼
+                    ┌────────────────────────┐
+                    │     Railway Nixpacks   │
+                    │   Parity API (Node.js) │
+                    └───────────┬────────────┘
+                                │ Railway Private Network
+                                ▼
+                    ┌────────────────────────┐
+                    │   Railway PostgreSQL   │
+                    │       + pgvector       │
+                    └────────────────────────┘
+```
+
+- **Frontend**: Deployed independently to **Vercel** as a static single-page application.
+- **Backend API**: Deployed to **Railway** from the monorepo root. Builds `@parity/shared` and `@parity/backend` (`npm run build:shared && npm run build:backend`), starts via `node backend/dist/server.js`.
+- **Database**: Railway managed PostgreSQL 16 with the `pgvector` extension (`DATABASE_URL` required in production).
+- **Queue & Worker**: Zero Redis or BullMQ dependency. Processing uses lightweight in-process dispatching (`setImmediate`) with synchronous fallback.
+- **Zero Redis**: Redis is completely excluded from runtime, configuration, and dependencies.

@@ -37,7 +37,7 @@
 ### Evidence
 - **Layer Separation**:
   - `shared/src/`: Universal data contracts, Zod schemas, taxonomy, and benchmark seeds.
-  - `backend/src/`: Express routing, BullMQ worker, text extraction, embedding math, AI orchestration, scoring pipelines, and synthesis services.
+  - `backend/src/`: Express routing, lightweight in-process worker, text extraction, embedding math, AI orchestration, scoring pipelines, and synthesis services.
   - `frontend/src/`: React UI components, Neo-Brutalist CSS design system, and client-side view state.
 - **Business Logic Isolation (Zero UI or Transport Leakage)**:
   - Calculation and decision logic reside strictly in `backend/src/services/` as pure functions:

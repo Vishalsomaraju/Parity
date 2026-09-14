@@ -6,7 +6,31 @@ dotenv.config();
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(4000),
-  DATABASE_URL: z.string().default('postgresql://postgres:postgres@localhost:5433/parity'),
+  DATABASE_URL: z
+    .string()
+    .optional()
+    .transform((val, ctx) => {
+      const nodeEnv = process.env.NODE_ENV || 'development';
+      const trimmed = val ? val.trim() : '';
+      if (nodeEnv === 'production') {
+        if (!trimmed) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'DATABASE_URL is required in production mode. Please provide a valid PostgreSQL connection string.',
+          });
+          return z.NEVER;
+        }
+        if (trimmed.includes('localhost') || trimmed.includes('127.0.0.1')) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'DATABASE_URL cannot point to localhost in production mode.',
+          });
+          return z.NEVER;
+        }
+        return trimmed;
+      }
+      return trimmed || 'postgresql://postgres:postgres@localhost:5433/parity';
+    }),
   SIMILARITY_THRESHOLD: z.coerce.number().min(0).max(1).default(0.65),
   // Primary AI: Google Gemini
   GEMINI_API_KEY: z.string().optional().default(''),

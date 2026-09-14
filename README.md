@@ -86,7 +86,7 @@ Parity/
 ```
 
 - **`shared/`**: Contains canonical data types, risk tiers (`Fair`, `Worth a Second Look`, `Red Flag`), and Zod validation schemas. Shared across client and server with zero code duplication.
-- **`backend/`**: Express API, processing queue with BullMQ and synchronous fallback, text extractors, vector embeddings, and multi-provider AI orchestrator.
+- **`backend/`**: Express API, lightweight in-process processing queue (`setImmediate`) with synchronous fallback, text extractors, vector embeddings, and multi-provider AI orchestrator.
 - **`frontend/`**: Zero bloated UI libraries; pure vanilla CSS design system (`index.css`), accessible dual-pane document reader, and ParityInspector.
 
 See: [ARCHITECTURE.md](file:///e:/Parity/ARCHITECTURE.md) for full architectural layering, boundary diagrams, and design rules.
@@ -184,6 +184,38 @@ cp backend/.env.example backend/.env
 # 4. Start backend & frontend
 npm run dev
 ```
+
+---
+
+## Production Deployment
+
+### 1. Backend API (Railway)
+- **Root Directory**: Repository root (`/`)
+- **Build Command**: `npm run build:shared && npm run build:backend`
+- **Start Command**: `npm run start:backend` (runs `node backend/dist/server.js`)
+- **Healthcheck Path**: `/api/health`
+- **Database**: Railway PostgreSQL service with `pgvector`
+- **Required Environment Variables**:
+  - `NODE_ENV=production`
+  - `DATABASE_URL=${{Postgres.DATABASE_URL}}`
+  - `FRONTEND_URL=https://<your-vercel-domain>.vercel.app`
+  - `CORS_ORIGIN=https://<your-vercel-domain>.vercel.app`
+  - `GEMINI_API_KEY` or `OPENAI_API_KEY`
+  - `PORT` (automatically injected by Railway)
+
+### 2. Frontend (Vercel)
+- **Framework Preset**: Vite
+- **Root Directory**: `frontend`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**:
+  - `VITE_API_URL=https://<your-railway-app>.up.railway.app`
+
+### 3. Architecture Topology
+- **Frontend**: Vercel
+- **Backend**: Railway API (Node.js + Express)
+- **Database**: Railway PostgreSQL + `pgvector`
+- **Redis**: None (Zero Redis dependency; in-process `setImmediate` task queue)
 
 ---
 

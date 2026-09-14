@@ -14,11 +14,38 @@ export const securityHeaders = helmet({
 
 /**
  * CORS configuration
+ * In development: allows localhost frontends.
+ * In production: strictly restricts origins to configured FRONTEND_URL and CORS_ORIGIN (e.g. Vercel deployment).
  */
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, postman) or matching frontends
-    callback(null, true);
+    // Requests with no origin (curl, health checks, server-to-server) are allowed
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const config = getConfig();
+
+    // In development / test, allow local development origins
+    if (config.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    // In production, build allowed origins set from environment variables
+    const allowedOrigins = new Set<string>();
+    if (config.FRONTEND_URL) {
+      config.FRONTEND_URL.split(',').forEach((url) => allowedOrigins.add(url.trim()));
+    }
+    if (config.CORS_ORIGIN) {
+      config.CORS_ORIGIN.split(',').forEach((url) => allowedOrigins.add(url.trim()));
+    }
+
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked unauthorized origin in production: ${origin}`);
+    return callback(new Error('Not allowed by CORS policy in production.'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
