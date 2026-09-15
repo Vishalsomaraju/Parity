@@ -1,26 +1,66 @@
 import crypto from 'crypto';
 import { getConfig } from '../../config/env';
 
+// ─── In-process embedding cache (LRU-style, 256 entries) ────────────────────
+const CACHE_MAX = 256;
+const embeddingCache = new Map<string, number[]>();
+
+function getCached(text: string): number[] | undefined {
+  const key = text.slice(0, 256); // only cache first 256 chars as key
+  return embeddingCache.get(key);
+}
+
+function setCached(text: string, vector: number[]): void {
+  const key = text.slice(0, 256);
+  if (embeddingCache.size >= CACHE_MAX) {
+    // Evict oldest entry
+    const firstKey = embeddingCache.keys().next().value;
+    if (firstKey !== undefined) embeddingCache.delete(firstKey);
+  }
+  embeddingCache.set(key, vector);
+}
+
+/** Clear the embedding cache — used in tests */
+export function clearEmbeddingCache(): void {
+  embeddingCache.clear();
+}
+
 /**
  * Generate a 768-dimensional embedding vector for text.
  * Uses live Gemini embeddings if available; otherwise falls back
  * to a deterministic normalized term-frequency semantic vector.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
+  const cached = getCached(text);
+  if (cached) return cached;
+
   const config = getConfig();
 
   if (config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none') {
     try {
       const liveVector = await fetchGeminiEmbedding(text, config.GEMINI_API_KEY);
       if (liveVector && liveVector.length === 768) {
+        setCached(text, liveVector);
         return liveVector;
       }
-    } catch (err: any) {
+    } catch {
       // Degrade to deterministic vector
     }
   }
 
-  return generateDeterministicVector(text, 768);
+  const det = generateDeterministicVector(text, 768);
+  setCached(text, det);
+  return det;
+}
+
+/**
+ * Generate embeddings for multiple texts in parallel.
+ * Shares the same cache and falls back to deterministic vectors.
+ * Much faster than calling generateEmbedding() sequentially in a loop.
+ */
+export async function generateEmbeddingBatch(texts: string[]): Promise<number[][]> {
+  if (texts.length === 0) return [];
+  return Promise.all(texts.map((t) => generateEmbedding(t)));
 }
 
 /**

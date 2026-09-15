@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ClauseType, DocumentType, RiskTier, EvidenceStatus } from '@parity/shared';
 import { getConfig } from '../../config/env';
 import { query, loadBenchmarkSeeds } from '../../db/connection';
-import { generateEmbedding, cosineSimilarity } from '../embeddings/embeddingService';
+import { generateEmbeddingBatch, generateDeterministicVector, cosineSimilarity } from '../embeddings/embeddingService';
 import { executeStructuredAI } from '../ai/aiOrchestrator';
 import { truncateForLog } from '../../utils/sanitize';
 
@@ -55,22 +55,23 @@ export async function scoreClauses(
   // 1. Fetch benchmark corpus
   const benchmarks = await getBenchmarksForDocType(documentType);
 
-  // 2. Perform vector embeddings and Stage 1 cosine similarity matching
+  // 2. Parallel batch embeddings for all clauses in one shot (Stage 1 cosine similarity)
+  const clauseTexts = clauses.map((c) => c.clauseText);
+  const clauseEmbeddings = await generateEmbeddingBatch(clauseTexts);
+
   const clausesWithMatches: Array<{
     clause: (typeof clauses)[0];
     bestMatch: BenchmarkMatch | null;
     similarity: number;
-  }> = [];
-
-  for (const c of clauses) {
-    const embedding = await generateEmbedding(c.clauseText);
+  }> = clauses.map((c, i) => {
+    const embedding = clauseEmbeddings[i];
     const bestMatch = findBestBenchmark(embedding, c.clauseType, benchmarks);
-    clausesWithMatches.push({
+    return {
       clause: c,
       bestMatch,
       similarity: bestMatch ? bestMatch.similarity : 0,
-    });
-  }
+    };
+  });
 
   // 3. Partition by similarity threshold
   const clausesForLLM: Array<(typeof clausesWithMatches)[0]> = [];
@@ -204,10 +205,15 @@ function findBestBenchmark(
   return bestMatch;
 }
 
+// Module-level cache for benchmark deterministic vectors
+const benchmarkVectorCache = new Map<string, number[]>();
+
 function generateEmbeddingSync(text: string): number[] {
-  // Use fast deterministic generator for benchmark vectors
-  const { generateDeterministicVector } = require('../embeddings/embeddingService');
-  return generateDeterministicVector(text, 768);
+  const cached = benchmarkVectorCache.get(text);
+  if (cached) return cached;
+  const vec = generateDeterministicVector(text, 768);
+  benchmarkVectorCache.set(text, vec);
+  return vec;
 }
 
 /**
