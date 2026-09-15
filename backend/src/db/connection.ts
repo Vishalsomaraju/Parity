@@ -106,6 +106,12 @@ const sessionTimelines = new Map<string, SessionTimeline>();
 const sessionKeyTerms = new Map<string, SessionKeyTerms>();
 const sessionComparisons = new Map<string, SessionComparison>();
 
+// Secondary indexes: docId → Set<entityId> for O(1) SELECT by document_id
+const sessionClausesByDoc = new Map<string, Set<string>>();
+const sessionFinePrintByDoc = new Map<string, Set<string>>();
+const sessionObligationsByDoc = new Map<string, Set<string>>();
+const sessionTimelinesByDoc = new Map<string, Set<string>>();
+
 let loadedBenchmarks: any[] | null = null;
 
 export function loadBenchmarkSeeds(): any[] {
@@ -285,127 +291,121 @@ function handleDegradedSessionQuery<T>(text: string, params: unknown[] = []): T[
     return doc ? ([doc] as unknown as T[]) : ([] as T[]);
   }
 
-  // INSERT INTO clauses
+  // INSERT INTO clauses — supports both single-row and multi-row batch params
   if (norm.startsWith('INSERT INTO clauses')) {
-    const [
-      id,
-      document_id,
-      page_number,
-      section_title,
-      clause_index,
-      clause_type,
-      clause_text,
-      content_hash,
-      similarity_score,
-      risk_tier,
-      risk_explanation,
-      plain_meaning,
-      why_it_matters,
-      evidence_status,
-    ] = params as any[];
-    const clause: SessionClause = {
-      id,
-      document_id,
-      page_number: page_number || 1,
-      section_title,
-      clause_index,
-      clause_type,
-      clause_text,
-      content_hash,
-      similarity_score,
-      risk_tier,
-      risk_explanation,
-      plain_meaning,
-      why_it_matters,
-      evidence_status: evidence_status || 'grounded',
-      created_at: new Date(),
-    };
-    sessionClauses.set(id, clause);
+    const COLS = 14;
+    for (let i = 0; i < params.length; i += COLS) {
+      const [
+        id, document_id, page_number, section_title, clause_index, clause_type,
+        clause_text, content_hash, similarity_score, risk_tier, risk_explanation,
+        plain_meaning, why_it_matters, evidence_status,
+      ] = params.slice(i, i + COLS) as any[];
+      const clause: SessionClause = {
+        id,
+        document_id,
+        page_number: page_number || 1,
+        section_title,
+        clause_index,
+        clause_type,
+        clause_text,
+        content_hash,
+        similarity_score,
+        risk_tier,
+        risk_explanation,
+        plain_meaning,
+        why_it_matters,
+        evidence_status: evidence_status || 'grounded',
+        created_at: new Date(),
+      };
+      sessionClauses.set(id, clause);
+      if (!sessionClausesByDoc.has(document_id)) sessionClausesByDoc.set(document_id, new Set());
+      sessionClausesByDoc.get(document_id)!.add(id);
+    }
     return [] as T[];
   }
 
   // SELECT ... FROM clauses WHERE document_id = $1
   if (norm.includes('FROM clauses WHERE document_id = $1')) {
     const [document_id] = params as [string];
-    const list: SessionClause[] = [];
-    for (const c of sessionClauses.values()) {
-      if (c.document_id === document_id) {
-        list.push(c);
-      }
-    }
-    list.sort((a, b) => a.clause_index - b.clause_index);
+    const ids = sessionClausesByDoc.get(document_id) || new Set<string>();
+    const list = Array.from(ids)
+      .map((id) => sessionClauses.get(id)!)
+      .filter(Boolean)
+      .sort((a, b) => a.clause_index - b.clause_index);
     return list as unknown as T[];
   }
 
-  // INSERT INTO fine_print
+  // INSERT INTO fine_print — supports multi-row batch params
   if (norm.startsWith('INSERT INTO fine_print')) {
-    const [id, document_id, title, explanation, tier, related_clause_index, related_clause_type] = params as any[];
-    const fp: SessionFinePrint = {
-      id,
-      document_id,
-      title,
-      explanation,
-      tier,
-      related_clause_index,
-      related_clause_type,
-      created_at: new Date(),
-    };
-    sessionFinePrint.set(id, fp);
+    const COLS = 7;
+    for (let i = 0; i < params.length; i += COLS) {
+      const [id, document_id, title, explanation, tier, related_clause_index, related_clause_type] = params.slice(i, i + COLS) as any[];
+      const fp: SessionFinePrint = {
+        id, document_id, title, explanation, tier, related_clause_index, related_clause_type, created_at: new Date(),
+      };
+      sessionFinePrint.set(id, fp);
+      if (!sessionFinePrintByDoc.has(document_id)) sessionFinePrintByDoc.set(document_id, new Set());
+      sessionFinePrintByDoc.get(document_id)!.add(id);
+    }
     return [] as T[];
   }
 
   // SELECT FROM fine_print
   if (norm.includes('FROM fine_print WHERE document_id = $1')) {
     const [document_id] = params as [string];
-    const list = Array.from(sessionFinePrint.values()).filter((f) => f.document_id === document_id);
+    const ids = sessionFinePrintByDoc.get(document_id) || new Set<string>();
+    const list = Array.from(ids).map((id) => sessionFinePrint.get(id)!).filter(Boolean);
     return list as unknown as T[];
   }
 
-  // INSERT INTO obligations
+  // INSERT INTO obligations — supports multi-row batch params
   if (norm.startsWith('INSERT INTO obligations')) {
-    const [id, document_id, party, description, clause_index, is_critical] = params as any[];
-    const ob: SessionObligation = {
-      id,
-      document_id,
-      party,
-      description,
-      clause_index,
-      is_critical: Boolean(is_critical),
-      created_at: new Date(),
-    };
-    sessionObligations.set(id, ob);
+    const COLS = 6;
+    for (let i = 0; i < params.length; i += COLS) {
+      const [id, document_id, party, description, clause_index, is_critical] = params.slice(i, i + COLS) as any[];
+      const ob: SessionObligation = {
+        id, document_id, party, description, clause_index,
+        is_critical: Boolean(is_critical), created_at: new Date(),
+      };
+      sessionObligations.set(id, ob);
+      if (!sessionObligationsByDoc.has(document_id)) sessionObligationsByDoc.set(document_id, new Set());
+      sessionObligationsByDoc.get(document_id)!.add(id);
+    }
     return [] as T[];
   }
 
   // SELECT FROM obligations
   if (norm.includes('FROM obligations WHERE document_id = $1')) {
     const [document_id] = params as [string];
-    const list = Array.from(sessionObligations.values()).filter((o) => o.document_id === document_id);
+    const ids = sessionObligationsByDoc.get(document_id) || new Set<string>();
+    const list = Array.from(ids).map((id) => sessionObligations.get(id)!).filter(Boolean);
     return list as unknown as T[];
   }
 
-  // INSERT INTO timelines
+  // INSERT INTO timelines — supports multi-row batch params
   if (norm.startsWith('INSERT INTO timelines')) {
-    const [id, document_id, milestone, timing, type, description, relative_order] = params as any[];
-    const tl: SessionTimeline = {
-      id,
-      document_id,
-      milestone,
-      timing,
-      type,
-      description,
-      relative_order: relative_order || 0,
-      created_at: new Date(),
-    };
-    sessionTimelines.set(id, tl);
+    const COLS = 7;
+    for (let i = 0; i < params.length; i += COLS) {
+      const [id, document_id, milestone, timing, type, description, relative_order] = params.slice(i, i + COLS) as any[];
+      const tl: SessionTimeline = {
+        id, document_id, milestone, timing, type, description,
+        relative_order: relative_order || 0, created_at: new Date(),
+      };
+      sessionTimelines.set(id, tl);
+      if (!sessionTimelinesByDoc.has(document_id)) sessionTimelinesByDoc.set(document_id, new Set());
+      sessionTimelinesByDoc.get(document_id)!.add(id);
+    }
     return [] as T[];
   }
 
   // SELECT FROM timelines
   if (norm.includes('FROM timelines WHERE document_id = $1')) {
     const [document_id] = params as [string];
-    const list = Array.from(sessionTimelines.values()).filter((t) => t.document_id === document_id);
-    list.sort((a, b) => a.relative_order - b.relative_order);
+    const ids = sessionTimelinesByDoc.get(document_id) || new Set<string>();
+    const list = Array.from(ids)
+      .map((id) => sessionTimelines.get(id)!)
+      .filter(Boolean)
+      .sort((a, b) => a.relative_order - b.relative_order);
     return list as unknown as T[];
   }
 

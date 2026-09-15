@@ -218,6 +218,13 @@ export async function processDocumentJob(job: ProcessingJob): Promise<void> {
   }
 }
 
+/** Build parameterized multi-row VALUES clause: ($1,$2,…),($N+1,…) */
+function buildBatchValues(numRows: number, colsPerRow: number): string {
+  return Array.from({ length: numRows }, (_, r) =>
+    `(${Array.from({ length: colsPerRow }, (_, c) => `$${r * colsPerRow + c + 1}`).join(', ')})`
+  ).join(', ');
+}
+
 async function persistProcessedDocument(data: {
   documentId: string;
   filename: string;
@@ -257,65 +264,64 @@ async function persistProcessedDocument(data: {
       [documentId, filename, documentType, ProcessingStatus.Complete, isDemo, pageCount, clauseCount]
     );
 
-    // 2. Insert Clauses
-    for (const c of scoredClauses) {
-      const clauseId = `cl_${documentId}_${c.clauseIndex}`;
+    // 2. Batch-insert all clauses (N rows → 1 query)
+    if (scoredClauses.length > 0) {
+      const clauseVals: unknown[] = [];
+      for (const c of scoredClauses) {
+        clauseVals.push(
+          `cl_${documentId}_${c.clauseIndex}`, documentId, 1,
+          c.sectionTitle || `Section ${c.clauseIndex}`,
+          c.clauseIndex, c.clauseType, c.clauseText, c.contentHash,
+          c.similarityScore, c.riskTier, c.riskExplanation,
+          c.plainMeaning, c.whyItMatters, c.evidenceStatus || EvidenceStatus.Grounded
+        );
+      }
       await query(
         `INSERT INTO clauses (
           id, document_id, page_number, section_title, clause_index, clause_type,
           clause_text, content_hash, similarity_score, risk_tier, risk_explanation,
           plain_meaning, why_it_matters, evidence_status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
-        [
-          clauseId,
-          documentId,
-          1,
-          c.sectionTitle || `Section ${c.clauseIndex}`,
-          c.clauseIndex,
-          c.clauseType,
-          c.clauseText,
-          c.contentHash,
-          c.similarityScore,
-          c.riskTier,
-          c.riskExplanation,
-          c.plainMeaning,
-          c.whyItMatters,
-          c.evidenceStatus || EvidenceStatus.Grounded,
-        ]
+        ) VALUES ${buildBatchValues(scoredClauses.length, 14)}`,
+        clauseVals
       );
     }
 
-    // 3. Insert Fine Print
-    for (const fp of finePrint) {
+    // 3. Batch-insert fine print
+    if (finePrint.length > 0) {
+      const fpVals: unknown[] = [];
+      for (const fp of finePrint) {
+        fpVals.push(fp.id, documentId, fp.title, fp.explanation, fp.tier, fp.relatedClauseIndex, fp.relatedClauseType || 'General');
+      }
       await query(
         `INSERT INTO fine_print (id, document_id, title, explanation, tier, related_clause_index, related_clause_type)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [fp.id, documentId, fp.title, fp.explanation, fp.tier, fp.relatedClauseIndex, fp.relatedClauseType || 'General']
+         VALUES ${buildBatchValues(finePrint.length, 7)}`,
+        fpVals
       );
     }
 
-    // 4. Insert Obligations
-    for (const yo of obligations.yourObligations) {
+    // 4. Batch-insert all obligations (your + their) in one query
+    const allObligs = [
+      ...obligations.yourObligations.map((yo: any) => [yo.id, documentId, 'your', yo.description, yo.clauseIndex || 0, yo.isCritical]),
+      ...obligations.theirObligations.map((to: any) => [to.id, documentId, 'their', to.description, to.clauseIndex || 0, to.isCritical]),
+    ];
+    if (allObligs.length > 0) {
       await query(
         `INSERT INTO obligations (id, document_id, party, description, clause_index, is_critical)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [yo.id, documentId, 'your', yo.description, yo.clauseIndex || 0, yo.isCritical]
-      );
-    }
-    for (const to of obligations.theirObligations) {
-      await query(
-        `INSERT INTO obligations (id, document_id, party, description, clause_index, is_critical)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [to.id, documentId, 'their', to.description, to.clauseIndex || 0, to.isCritical]
+         VALUES ${buildBatchValues(allObligs.length, 6)}`,
+        allObligs.flat()
       );
     }
 
-    // 5. Insert Timelines
-    for (const tl of timeline) {
+    // 5. Batch-insert timelines
+    if (timeline.length > 0) {
+      const tlVals: unknown[] = [];
+      for (const tl of timeline) {
+        tlVals.push(tl.id, documentId, tl.milestone, tl.timing, tl.type, tl.description, tl.relativeOrder);
+      }
       await query(
         `INSERT INTO timelines (id, document_id, milestone, timing, type, description, relative_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [tl.id, documentId, tl.milestone, tl.timing, tl.type, tl.description, tl.relativeOrder]
+         VALUES ${buildBatchValues(timeline.length, 7)}`,
+        tlVals
       );
     }
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { QAResponse, EvidenceStatus, ClauseType } from '@parity/shared';
 import { executeStructuredAI } from '../ai/aiOrchestrator';
-import { cosineSimilarity, generateDeterministicVector } from '../embeddings/embeddingService';
+import { cosineSimilarity, generateEmbeddingBatch } from '../embeddings/embeddingService';
 
 export interface ClauseContext {
   id: string;
@@ -24,13 +24,13 @@ export async function answerContextualQuestion(
 ): Promise<QAResponse> {
   const cleanQ = question.trim();
 
-  // 1. Semantic retrieval of top candidate clauses
-  const questionVector = generateDeterministicVector(cleanQ, 768);
-  const scoredClauses = clauses.map((c) => {
-    const clauseVector = generateDeterministicVector(c.clauseText, 768);
-    const sim = cosineSimilarity(questionVector, clauseVector);
-    return { clause: c, similarity: sim };
-  });
+  // 1. Semantic retrieval — batch all vectors in one parallel call (clause texts already cached from scoring)
+  const allTexts = [cleanQ, ...clauses.map((c) => c.clauseText)];
+  const [questionVector, ...clauseVectors] = await generateEmbeddingBatch(allTexts);
+  const scoredClauses = clauses.map((c, i) => ({
+    clause: c,
+    similarity: cosineSimilarity(questionVector, clauseVectors[i]),
+  }));
 
   scoredClauses.sort((a, b) => b.similarity - a.similarity);
   const topCandidates = scoredClauses.slice(0, 3);
