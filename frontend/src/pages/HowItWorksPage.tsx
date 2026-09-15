@@ -2,13 +2,11 @@ import React from 'react';
 
 interface HowItWorksPageProps {
   onOpenUpload: () => void;
-  onOpenCompare: () => void;
   onStartDemo: () => void;
 }
 
 export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
   onOpenUpload,
-  onOpenCompare,
   onStartDemo,
 }) => {
   return (
@@ -40,11 +38,11 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
           }}
         >
           Parity is built for the PromptWars problem statement: <em>AI for Legal Assistance & Access</em>.
-          It combines deterministic parsing, benchmark vector similarity gating, and multi-tier GenAI models to make legal agreements understandable for non-lawyers.
+          It combines deterministic parsing, benchmark vector similarity gating, and multi-tier GenAI models to make legal agreements transparent and actionable for non-lawyers.
         </p>
       </div>
 
-      {/* 5-Step Pipeline Grid */}
+      {/* 4-Step Pipeline Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
         {/* Step 1 */}
         <div className="inspector-card" style={{ padding: '24px', borderLeft: '4px solid var(--accent-gold)' }}>
@@ -55,7 +53,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
             </h2>
           </div>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary-dark)', lineHeight: 1.6 }}>
-            Uploaded PDF, DOCX, or TXT documents are parsed in-memory without persistent disk retention. A regex boundary detector splits the text into structured clauses using standard legal numbering and heading patterns. If deterministic splitting yields fewer than 3 sections (e.g. poorly formatted contracts), an LLM boundary fallback activates to recover the natural clauses.
+            Uploaded PDF, DOCX, or TXT documents are parsed in-memory without persistent disk retention. A regex boundary detector splits the text into structured clauses using standard legal numbering and heading patterns. If deterministic splitting yields fewer than 3 sections, an LLM boundary fallback recovers natural clauses.
           </p>
         </div>
 
@@ -81,12 +79,12 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
             </h2>
           </div>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary-dark)', lineHeight: 1.6 }}>
-            Rather than generic 0–100 scores, Parity translates dense legalese into concrete real-world consequences:
+            Rather than vague ratings, Parity translates dense legalese into concrete real-world implications:
           </p>
           <ul style={{ paddingLeft: '20px', marginTop: '10px', color: 'var(--text-secondary-dark)', fontSize: '13px', lineHeight: 1.7 }}>
             <li><strong>Fine Print, Translated:</strong> Uncovers buried gotchas (e.g., unlimited indemnities, unilateral IP assignment).</li>
             <li><strong>Key Terms:</strong> Parties, payment schedules, duration, deposits, and governing jurisdiction.</li>
-            <li><strong>Obligations:</strong> Separated into <em>Your Obligations</em>, <em>Their Obligations</em>, and mutual requirements.</li>
+            <li><strong>Obligations:</strong> Categorized into <em>Your Obligations</em>, <em>Their Obligations</em>, and mutual requirements.</li>
             <li><strong>Timeline:</strong> Critical dates, cure periods, notice windows, and renewal triggers arranged chronologically.</li>
           </ul>
         </div>
@@ -96,24 +94,11 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
             <span style={{ fontSize: '18px', fontWeight: 800, color: '#a78bfa' }}>04</span>
             <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#fff' }}>
-              Document-vs-Document Semantic Comparison
-            </h2>
-          </div>
-          <p style={{ fontSize: '14px', color: 'var(--text-secondary-dark)', lineHeight: 1.6 }}>
-            Parity aligns two agreements across 20 canonical legal categories (Payment, IP, Liability, Indemnity, Non-Compete, Termination, etc.), highlighting which document offers stronger protections, which terms are equivalent, and where protections are completely missing in Document A or B.
-          </p>
-        </div>
-
-        {/* Step 5 */}
-        <div className="inspector-card" style={{ padding: '24px', borderLeft: '4px solid #f87171' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-            <span style={{ fontSize: '18px', fontWeight: 800, color: '#f87171' }}>05</span>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#fff' }}>
               Grounded Anti-Hallucination Q&A with Clause Citations
             </h2>
           </div>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary-dark)', lineHeight: 1.6 }}>
-            Every answer provided by the contextual Q&A engine is grounded directly in the document text. The response includes the supporting clause ID, page number, and verbatim excerpt. If the document does not contain sufficient evidence, Parity explicitly reports <em>insufficient evidence</em> rather than guessing.
+            Every answer provided by the contextual Q&A engine is grounded directly in the document text. The response includes the supporting clause ID, page number, and verbatim excerpt. If the document does not contain sufficient evidence, Parity explicitly reports <em>insufficient evidence</em> rather than hallucinating.
           </p>
         </div>
       </div>
@@ -172,19 +157,6 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
             padding: '12px 20px',
             borderColor: 'var(--border-dark)',
             backgroundColor: 'var(--bg-surface-dark)',
-            color: '#fff',
-          }}
-          onClick={onOpenCompare}
-        >
-          Compare Contracts
-        </button>
-        <button
-          className="nav-btn"
-          style={{
-            fontSize: '14px',
-            padding: '12px 20px',
-            borderColor: 'var(--border-dark)',
-            backgroundColor: 'var(--bg-surface-dark)',
             color: 'var(--accent-gold)',
           }}
           onClick={onStartDemo}
@@ -195,3 +167,4 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({
     </main>
   );
 };
+

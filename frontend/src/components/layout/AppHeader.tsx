@@ -1,12 +1,18 @@
 import React from 'react';
 
 interface AppHeaderProps {
-  currentView: 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal';
-  onNavigate: (view: 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal') => void;
+  currentView: 'upload' | 'results' | 'how-it-works';
+  onNavigate: (view: 'upload' | 'results' | 'how-it-works') => void;
   onLaunchDemo: () => void;
+  hasActiveDocument?: boolean;
 }
 
-export const AppHeader: React.FC<AppHeaderProps> = ({ currentView, onNavigate, onLaunchDemo }) => {
+export const AppHeader: React.FC<AppHeaderProps> = ({
+  currentView,
+  onNavigate,
+  onLaunchDemo,
+  hasActiveDocument = false,
+}) => {
   return (
     <header className="app-header" role="banner">
       <div
@@ -32,16 +38,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ currentView, onNavigate, o
           Upload Document
         </button>
         <button
-          className={`nav-btn ${currentView === 'workspace' ? 'active' : ''}`}
-          onClick={() => onNavigate('workspace')}
+          className={`nav-btn ${currentView === 'results' ? 'active' : ''}`}
+          onClick={() => onNavigate('results')}
+          title={hasActiveDocument ? 'View analyzed results' : 'No document analyzed yet'}
         >
-          Results
-        </button>
-        <button
-          className={`nav-btn ${currentView === 'compare' ? 'active' : ''}`}
-          onClick={() => onNavigate('compare')}
-        >
-          Compare Contracts
+          Results {hasActiveDocument && <span style={{ fontSize: '9px', color: 'var(--accent-gold)' }}>●</span>}
         </button>
         <button
           className={`nav-btn ${currentView === 'how-it-works' ? 'active' : ''}`}
@@ -50,15 +51,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ currentView, onNavigate, o
           How It Works
         </button>
         <button
-          className={`nav-btn ${currentView === 'legal' ? 'active' : ''}`}
-          onClick={() => onNavigate('legal')}
-        >
-          Legal & Licensing
-        </button>
-        <button
           className="cta-btn-primary"
           onClick={onLaunchDemo}
           title="Instant 1-click interactive demo"
+          style={{ fontSize: '13px', padding: '7px 16px' }}
         >
           Try Demo →
         </button>
@@ -66,3 +62,4 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ currentView, onNavigate, o
     </header>
   );
 };
+

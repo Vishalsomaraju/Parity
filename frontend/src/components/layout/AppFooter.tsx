@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface AppFooterProps {
-  currentView: 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal';
-  onNavigate: (view: 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal') => void;
+  currentView: 'upload' | 'results' | 'how-it-works';
+  onNavigate: (view: 'upload' | 'results' | 'how-it-works') => void;
 }
 
 export const AppFooter: React.FC<AppFooterProps> = ({ currentView, onNavigate }) => {
@@ -11,7 +11,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ currentView, onNavigate })
       style={{
         backgroundColor: 'var(--bg-surface-dark)',
         borderTop: '1px solid var(--border-dark)',
-        padding: '36px 24px',
+        padding: '32px 24px',
         marginTop: 'auto',
       }}
       role="contentinfo"
@@ -22,7 +22,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ currentView, onNavigate })
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px',
+          gap: '20px',
         }}
       >
         <div
@@ -80,28 +80,16 @@ export const AppFooter: React.FC<AppFooterProps> = ({ currentView, onNavigate })
               Upload Document
             </button>
             <button
-              onClick={() => onNavigate('workspace')}
+              onClick={() => onNavigate('results')}
               style={{
                 background: 'none',
                 border: 'none',
-                color: currentView === 'workspace' ? 'var(--accent-gold)' : 'var(--text-secondary-dark)',
+                color: currentView === 'results' ? 'var(--accent-gold)' : 'var(--text-secondary-dark)',
                 cursor: 'pointer',
                 fontWeight: 600,
               }}
             >
               Results
-            </button>
-            <button
-              onClick={() => onNavigate('compare')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: currentView === 'compare' ? 'var(--accent-gold)' : 'var(--text-secondary-dark)',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Compare Contracts
             </button>
             <button
               onClick={() => onNavigate('how-it-works')}
@@ -114,18 +102,6 @@ export const AppFooter: React.FC<AppFooterProps> = ({ currentView, onNavigate })
               }}
             >
               How It Works
-            </button>
-            <button
-              onClick={() => onNavigate('legal')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: currentView === 'legal' ? 'var(--accent-gold)' : 'var(--text-secondary-dark)',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Legal & Licensing
             </button>
           </nav>
         </div>

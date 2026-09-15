@@ -94,6 +94,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
             color: '#fff',
             letterSpacing: '-0.5px',
             marginBottom: '12px',
+            lineHeight: 1.2,
             fontFamily: 'var(--font-sans)',
           }}
         >
@@ -155,13 +156,19 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
           style={{
             border: '2px dashed var(--border-dark)',
             borderRadius: '6px',
-            padding: '36px',
+            padding: '32px 24px',
             textAlign: 'center',
             backgroundColor: 'var(--bg-app)',
             marginBottom: '24px',
+            minHeight: '184px',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          <div style={{ fontSize: '36px', marginBottom: '12px' }}>📄</div>
+          <div style={{ fontSize: '36px', marginBottom: '12px', lineHeight: 1 }}>📄</div>
           <input
             type="file"
             id="file-input"
@@ -186,15 +193,17 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
           >
             {file ? file.name : 'Choose PDF, DOCX, or TXT File'}
           </label>
-          {file ? (
-            <div style={{ marginTop: '12px', fontSize: '13px', color: 'var(--accent-gold)' }}>
-              Selected: <strong>{file.name}</strong> ({(file.size / 1024).toFixed(1)} KB)
-            </div>
-          ) : (
-            <div style={{ marginTop: '10px', fontSize: '12px', color: 'var(--text-muted-dark)' }}>
-              Max file size 15 MB · In-memory ephemeral processing · Zero persistent storage
-            </div>
-          )}
+          <div style={{ minHeight: '20px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {file ? (
+              <span style={{ fontSize: '13px', color: 'var(--accent-gold)' }}>
+                Selected: <strong>{file.name}</strong> ({(file.size / 1024).toFixed(1)} KB)
+              </span>
+            ) : (
+              <span style={{ fontSize: '12px', color: 'var(--text-muted-dark)' }}>
+                Max file size 15 MB · In-memory ephemeral processing · Zero persistent storage
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Progress Bar if Uploading */}

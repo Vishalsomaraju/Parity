@@ -17,16 +17,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
-    />
-    <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=optional"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=optional"
+      />
+    </noscript>
+    <link rel="stylesheet" href="/src/styles/index.css" />
   </head>
-  <body>
+  <body style="margin: 0; background-color: #121316; color: #f8fafc;">
     <div id="root">
       <div class="app-shell" style="display: flex; flex-direction: column; min-height: 100vh;">
         <aside class="disclaimer-banner" role="note" aria-label="Legal Disclaimer">
@@ -43,11 +47,9 @@
           </div>
           <nav class="nav-links" aria-label="Main Navigation">
             <button class="nav-btn active">Upload Document</button>
-            <button class="nav-btn">Results</button>
-            <button class="nav-btn">Compare Contracts</button>
+            <button class="nav-btn" title="No document analyzed yet">Results </button>
             <button class="nav-btn">How It Works</button>
-            <button class="nav-btn">Legal &amp; Licensing</button>
-            <button class="cta-btn-primary" title="Instant 1-click interactive demo">Try Demo →</button>
+            <button class="cta-btn-primary" title="Instant 1-click interactive demo" style="font-size: 13px; padding: 7px 16px;">Try Demo →</button>
           </nav>
         </header>
         <div style="flex: 1;">
@@ -56,7 +58,7 @@
               <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;">
                 <span class="badge badge-demo" style="font-size: 12px; padding: 6px 14px;">§ AI for Legal Assistance &amp; Access</span>
               </div>
-              <h1 style="font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 12px; font-family: var(--font-sans);">Upload Legal Document</h1>
+              <h1 style="font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 12px; line-height: 1.2; font-family: var(--font-sans);">Upload Legal Document</h1>
               <p style="color: var(--text-secondary-dark); font-size: 16px; max-width: 640px; margin: 0 auto; line-height: 1.6;">
                 Know where you stand before you sign. Upload a contract (PDF, DOCX, or TXT) to translate fine print, highlight hidden risks, extract obligations, and map timelines.
               </p>
@@ -70,15 +72,60 @@
                   <option value="policy_tos">Terms of Service / Privacy Policy</option>
                 </select>
               </div>
-              <div style="border: 2px dashed var(--border-dark); border-radius: 6px; padding: 36px; text-align: center; background-color: var(--bg-app); margin-bottom: 24px;">
-                <div style="font-size: 36px; margin-bottom: 12px;">📄</div>
+              <div style="border: 2px dashed var(--border-dark); border-radius: 6px; padding: 32px 24px; text-align: center; background-color: var(--bg-app); margin-bottom: 24px; min-height: 184px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div style="font-size: 36px; margin-bottom: 12px; line-height: 1;">📄</div>
                 <label class="nav-btn" style="display: inline-block; background-color: var(--bg-surface-elevated); border-color: var(--border-dark); color: #fff; cursor: pointer; padding: 12px 24px; font-size: 14px; font-weight: 600;">Choose PDF, DOCX, or TXT File</label>
-                <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted-dark);">Max file size 15 MB · In-memory ephemeral processing · Zero persistent storage</div>
+                <div style="min-height: 20px; margin-top: 12px; display: flex; align-items: center; justify-content: center;">
+                  <span style="font-size: 12px; color: var(--text-muted-dark);">Max file size 15 MB · In-memory ephemeral processing · Zero persistent storage</span>
+                </div>
               </div>
               <button class="cta-btn-primary" style="width: 100%; padding: 14px; font-size: 15px;" disabled>Start Document Analysis →</button>
             </section>
+            <section style="text-align: center;">
+              <h2 style="font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted-dark); margin-bottom: 16px;">Or Inspect Pre-Analyzed Sample Contracts Immediately (No Upload Required)</h2>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                <div class="inspector-card" style="padding: 18px; text-align: left; border: 1px solid var(--border-dark); background-color: var(--bg-surface-dark); cursor: pointer;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 18px;">📄</span>
+                    <span class="badge badge-fair" style="font-size: 11px;">Fair Baseline</span>
+                  </div>
+                  <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">Freelance Agreement</div>
+                  <div style="font-size: 12px; color: var(--text-secondary-dark); line-height: 1.4;">Net-30 payment, reciprocal indemnity, IP transferred upon payment.</div>
+                </div>
+                <div class="inspector-card" style="padding: 18px; text-align: left; border: 1px solid var(--border-dark); background-color: var(--bg-surface-dark); cursor: pointer;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 18px;">⚠️</span>
+                    <span class="badge badge-flag" style="font-size: 11px;">Red Flags</span>
+                  </div>
+                  <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">Omnicorp Contractor SOW</div>
+                  <div style="font-size: 12px; color: var(--text-secondary-dark); line-height: 1.4;">Net-90 payment, unlimited liability, 2-year non-compete clause.</div>
+                </div>
+              </div>
+            </section>
           </main>
         </div>
+        <footer style="background-color: var(--bg-surface-dark); border-top: 1px solid var(--border-dark); padding: 32px 24px; margin-top: auto;" role="contentinfo">
+          <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 24px; height: 24px; background-color: var(--accent-gold); color: #121316; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; border-radius: 3px;">§</div>
+                <div>
+                  <span style="font-weight: 900; letter-spacing: 1px; color: #fff; font-size: 14px;">PARITY</span>
+                  <span style="color: var(--text-muted-dark); font-size: 12px; margin-left: 8px;">Know where you stand before you sign.</span>
+                </div>
+              </div>
+              <nav style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px;" aria-label="Footer Navigation">
+                <button style="background: none; border: none; color: var(--accent-gold); cursor: pointer; font-weight: 600;">Upload Document</button>
+                <button style="background: none; border: none; color: var(--text-secondary-dark); cursor: pointer; font-weight: 600;">Results</button>
+                <button style="background: none; border: none; color: var(--text-secondary-dark); cursor: pointer; font-weight: 600;">How It Works</button>
+              </nav>
+            </div>
+            <div style="border-top: 1px solid var(--border-dark-subtle); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--text-muted-dark);">
+              <div>PromptWars 2026 · AI for Legal Assistance &amp; Access · Open Source (MIT License)</div>
+              <div>Parity is an automated legal comprehension tool and does not provide legal advice or attorney representation.</div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>

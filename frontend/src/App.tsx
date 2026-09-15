@@ -7,20 +7,14 @@ import { UploadPage } from './pages/UploadPage';
 import { apiUrl } from './config';
 
 // Lazy-load non-root pages to drastically reduce initial JS bundle & accelerate FCP/LCP
-const WorkspacePage = lazy(() =>
-  import('./pages/WorkspacePage').then((m) => ({ default: m.WorkspacePage }))
-);
-const ComparePage = lazy(() =>
-  import('./pages/ComparePage').then((m) => ({ default: m.ComparePage }))
+const ResultsPage = lazy(() =>
+  import('./pages/ResultsPage').then((m) => ({ default: m.ResultsPage }))
 );
 const HowItWorksPage = lazy(() =>
   import('./pages/HowItWorksPage').then((m) => ({ default: m.HowItWorksPage }))
 );
-const LegalLicensingPage = lazy(() =>
-  import('./pages/LegalLicensingPage').then((m) => ({ default: m.LegalLicensingPage }))
-);
 
-export type AppView = 'upload' | 'workspace' | 'compare' | 'how-it-works' | 'legal';
+export type AppView = 'upload' | 'results' | 'how-it-works';
 
 export const App: React.FC = () => {
   // Root view is directly the Upload Document interface
@@ -35,7 +29,7 @@ export const App: React.FC = () => {
       (window as any).requestIdleCallback ||
       ((cb: () => void) => setTimeout(cb, 1500));
     const handle = idleCallback(() => {
-      import('./pages/WorkspacePage');
+      import('./pages/ResultsPage');
       import('./data/demoFixtures');
     });
     return () => {
@@ -50,7 +44,7 @@ export const App: React.FC = () => {
     setActiveDocument(DEMO_FREELANCE_STANDARD.document);
     setActiveClauses(DEMO_FREELANCE_STANDARD.clauses);
     setDemoQAMap(DEMO_QA_MAP);
-    setCurrentView('workspace');
+    setCurrentView('results');
   };
 
   const handleSelectDocument = async (docId: string) => {
@@ -59,7 +53,7 @@ export const App: React.FC = () => {
       setActiveDocument(DEMO_FREELANCE_STANDARD.document);
       setActiveClauses(DEMO_FREELANCE_STANDARD.clauses);
       setDemoQAMap(DEMO_QA_MAP);
-      setCurrentView('workspace');
+      setCurrentView('results');
       return;
     }
     if (docId === 'demo_freelance_aggressive') {
@@ -67,7 +61,7 @@ export const App: React.FC = () => {
       setActiveDocument(DEMO_FREELANCE_AGGRESSIVE.document);
       setActiveClauses(DEMO_FREELANCE_AGGRESSIVE.clauses);
       setDemoQAMap(DEMO_QA_MAP);
-      setCurrentView('workspace');
+      setCurrentView('results');
       return;
     }
 
@@ -82,7 +76,7 @@ export const App: React.FC = () => {
         const clausesData = await clausesRes.json();
         setActiveDocument(docData);
         setActiveClauses(clausesData);
-        setCurrentView('workspace');
+        setCurrentView('results');
       }
     } catch {
       // Keep active
@@ -96,7 +90,7 @@ export const App: React.FC = () => {
         const clauses: Clause[] = await clausesRes.json();
         setActiveDocument(doc);
         setActiveClauses(clauses);
-        setCurrentView('workspace');
+        setCurrentView('results');
       }
     } catch (err) {
       console.error('Failed to load clauses for processed document:', err);
@@ -110,6 +104,7 @@ export const App: React.FC = () => {
         currentView={currentView}
         onNavigate={(view) => setCurrentView(view)}
         onLaunchDemo={handleLaunchDemo}
+        hasActiveDocument={Boolean(activeDocument)}
       />
 
       <div style={{ flex: 1 }}>
@@ -136,8 +131,8 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'workspace' && activeDocument && (
-            <WorkspacePage
+          {currentView === 'results' && (
+            <ResultsPage
               document={activeDocument}
               clauses={activeClauses}
               demoQAMap={demoQAMap}
@@ -146,29 +141,10 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'workspace' && !activeDocument && (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary-dark)' }}>
-              <p style={{ marginBottom: '16px' }}>No document is currently active.</p>
-              <button className="cta-btn-primary" onClick={() => setCurrentView('upload')}>
-                Upload a Document →
-              </button>
-            </div>
-          )}
-
-          {currentView === 'compare' && <ComparePage />}
-
           {currentView === 'how-it-works' && (
             <HowItWorksPage
               onOpenUpload={() => setCurrentView('upload')}
-              onOpenCompare={() => setCurrentView('compare')}
               onStartDemo={handleLaunchDemo}
-            />
-          )}
-
-          {currentView === 'legal' && (
-            <LegalLicensingPage
-              onOpenUpload={() => setCurrentView('upload')}
-              onOpenCompare={() => setCurrentView('compare')}
             />
           )}
         </Suspense>
@@ -183,3 +159,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

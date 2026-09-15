@@ -37,7 +37,7 @@
   --risk-flag-border: #ef4444;
 
   /* Typography */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -88,11 +88,16 @@ a:hover {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* Top Navigation Bar */
 .app-header {
   height: var(--header-height);
+  min-height: var(--header-height);
+  max-height: var(--header-height);
+  flex-shrink: 0;
+  box-sizing: border-box;
   background-color: var(--bg-surface-dark);
   border-bottom: 1px solid var(--border-dark);
   display: flex;
@@ -199,13 +204,19 @@ a:hover {
   border-bottom: 1px solid #3d2f1a;
   padding: 8px 24px;
   font-size: 12px;
+  line-height: 1.4;
+  min-height: 36px;
+  box-sizing: border-box;
+  flex-shrink: 0;
   color: #fde047;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 8px;
+  contain: layout;
 }
+
 
 /* Badge Styles */
 .badge {
