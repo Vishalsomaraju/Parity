@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import request from 'supertest';
-// Test against the compiled production build
-import app from '../dist/server';
-import { closePool } from '../dist/db/connection';
+// Test against production server application
+import app from '../src/server';
+import { closePool } from '../src/db/connection';
 
 describe('Production Build End-to-End Simulation (Section 42)', () => {
   let docAId: string;
