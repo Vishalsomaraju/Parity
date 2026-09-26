@@ -325,7 +325,7 @@ async function persistProcessedDocument(data: {
       );
     }
 
-    // 6. Insert Key Terms
+    // 6. Insert Key Terms (parties and important_dates are JSONB, requiring JSON.stringify for node-postgres)
     await query(
       `INSERT INTO key_terms (
         id, document_id, parties, duration, payment, notice_period, penalties, renewal, jurisdiction, deposit, important_dates
@@ -333,7 +333,7 @@ async function persistProcessedDocument(data: {
       [
         `kt_${documentId}`,
         documentId,
-        keyTerms.parties || [],
+        JSON.stringify(keyTerms.parties || []),
         keyTerms.duration || null,
         keyTerms.payment || null,
         keyTerms.noticePeriod || null,
@@ -341,7 +341,7 @@ async function persistProcessedDocument(data: {
         keyTerms.renewal || null,
         keyTerms.jurisdiction || null,
         keyTerms.deposit || null,
-        keyTerms.importantDates || [],
+        JSON.stringify(keyTerms.importantDates || []),
       ]
     );
 

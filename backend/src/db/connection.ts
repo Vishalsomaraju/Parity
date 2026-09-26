@@ -213,7 +213,7 @@ export async function query<T>(text: string, params: unknown[] = []): Promise<T[
   } catch (err: any) {
     if (config.NODE_ENV === 'production') {
       console.error('[DB] PostgreSQL query failed in production:', err.message);
-      throw new Error('Database query failed: Production requires an active, healthy PostgreSQL connection.');
+      throw new Error(`Database query failed: ${err.message}`);
     }
 
     const msg = err?.message || '';
@@ -413,10 +413,12 @@ function handleDegradedSessionQuery<T>(text: string, params: unknown[] = []): T[
   if (norm.startsWith('INSERT INTO key_terms')) {
     const [id, document_id, parties, duration, payment, notice_period, penalties, renewal, jurisdiction, deposit, important_dates] =
       params as any[];
+    const safeParties = typeof parties === 'string' ? JSON.parse(parties) : (parties || []);
+    const safeDates = typeof important_dates === 'string' ? JSON.parse(important_dates) : (important_dates || []);
     const kt: SessionKeyTerms = {
       id,
       document_id,
-      parties: parties || [],
+      parties: safeParties,
       duration,
       payment,
       notice_period,
@@ -424,7 +426,7 @@ function handleDegradedSessionQuery<T>(text: string, params: unknown[] = []): T[
       renewal,
       jurisdiction,
       deposit,
-      important_dates: important_dates || [],
+      important_dates: safeDates,
     };
     sessionKeyTerms.set(document_id, kt);
     return [] as T[];

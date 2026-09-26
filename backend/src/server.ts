@@ -9,6 +9,9 @@ import { closePool } from './db/connection';
 const app = express();
 const config = getConfig();
 
+// Configure trust proxy for reverse proxies (Render, Cloudflare, AWS ALB)
+app.set('trust proxy', 1);
+
 // Core Middleware
 app.use(securityHeaders);
 app.use(corsMiddleware);

@@ -41,20 +41,31 @@ export async function executeStructuredAI<T>(
 
   // Try Primary: Gemini
   if (config.GEMINI_API_KEY && config.GEMINI_API_KEY !== 'none') {
-    try {
-      const geminiOutput = await callGeminiWithTimeout(
-        options.systemPrompt,
-        options.userPrompt,
-        config.GEMINI_API_KEY,
-        config.GEMINI_MODEL,
-        options.temperature || 0.1
-      );
-      const parsed = cleanAndParseJSON(geminiOutput, options.schema);
-      if (parsed) {
-        return { data: parsed, provider: 'gemini', rawOutput: geminiOutput };
+    const configuredModel = config.GEMINI_MODEL;
+    // Auto-migrate legacy/retired gemini-1.5-flash to gemini-2.5-flash
+    const primaryModel = configuredModel === 'gemini-1.5-flash' ? 'gemini-2.5-flash' : configuredModel;
+    const candidateModels = Array.from(new Set([primaryModel, 'gemini-2.5-flash', 'gemini-2.0-flash'])).filter(Boolean);
+
+    for (const model of candidateModels) {
+      try {
+        const geminiOutput = await callGeminiWithTimeout(
+          options.systemPrompt,
+          options.userPrompt,
+          config.GEMINI_API_KEY,
+          model,
+          options.temperature || 0.1
+        );
+        const parsed = cleanAndParseJSON(geminiOutput, options.schema);
+        if (parsed) {
+          return { data: parsed, provider: 'gemini', rawOutput: geminiOutput };
+        }
+      } catch (err: any) {
+        console.warn(`[AI] Primary Gemini call (${model}) failed: ${sanitizeErrorMessage(err.message)}.`);
+        // Only try another model if it was a 404 (model not found / deprecated)
+        if (!err.message?.includes('404')) {
+          break;
+        }
       }
-    } catch (err: any) {
-      console.warn(`[AI] Primary Gemini call failed: ${sanitizeErrorMessage(err.message)}. Trying secondary provider...`);
     }
   }
 

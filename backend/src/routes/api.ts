@@ -185,6 +185,23 @@ router.get('/documents/:id', async (req: Request, res: Response, next) => {
       theirObligations: obligationsRows.filter((o) => o.party === 'their'),
     };
 
+    const formattedKeyTerms = keyTerms
+      ? {
+          parties: typeof keyTerms.parties === 'string' ? JSON.parse(keyTerms.parties) : (keyTerms.parties || []),
+          duration: keyTerms.duration || null,
+          payment: keyTerms.payment || null,
+          noticePeriod: keyTerms.notice_period || keyTerms.noticePeriod || null,
+          penalties: keyTerms.penalties || null,
+          renewal: keyTerms.renewal || null,
+          jurisdiction: keyTerms.jurisdiction || null,
+          deposit: keyTerms.deposit || null,
+          importantDates:
+            typeof keyTerms.important_dates === 'string'
+              ? JSON.parse(keyTerms.important_dates)
+              : (keyTerms.important_dates || keyTerms.importantDates || []),
+        }
+      : null;
+
     res.json({
       id: doc.id,
       filename: doc.filename,
@@ -195,7 +212,7 @@ router.get('/documents/:id', async (req: Request, res: Response, next) => {
       clauseCount: doc.clause_count || clauses.length,
       uploadedAt: doc.uploaded_at,
       errorMessage: doc.error_message,
-      keyTerms: keyTerms || null,
+      keyTerms: formattedKeyTerms,
       finePrint: finePrint || [],
       obligations,
       timeline: timeline || [],
