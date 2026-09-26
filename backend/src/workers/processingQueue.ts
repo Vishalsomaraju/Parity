@@ -289,8 +289,10 @@ async function persistProcessedDocument(data: {
     // 3. Batch-insert fine print
     if (finePrint.length > 0) {
       const fpVals: unknown[] = [];
-      for (const fp of finePrint) {
-        fpVals.push(fp.id, documentId, fp.title, fp.explanation, fp.tier, fp.relatedClauseIndex, fp.relatedClauseType || 'General');
+      for (let i = 0; i < finePrint.length; i++) {
+        const fp = finePrint[i];
+        const fpId = `fp_${documentId}_${i + 1}`;
+        fpVals.push(fpId, documentId, fp.title, fp.explanation, fp.tier, fp.relatedClauseIndex, fp.relatedClauseType || 'General');
       }
       await query(
         `INSERT INTO fine_print (id, document_id, title, explanation, tier, related_clause_index, related_clause_type)
@@ -301,8 +303,8 @@ async function persistProcessedDocument(data: {
 
     // 4. Batch-insert all obligations (your + their) in one query
     const allObligs = [
-      ...obligations.yourObligations.map((yo: any) => [yo.id, documentId, 'your', yo.description, yo.clauseIndex || 0, yo.isCritical]),
-      ...obligations.theirObligations.map((to: any) => [to.id, documentId, 'their', to.description, to.clauseIndex || 0, to.isCritical]),
+      ...obligations.yourObligations.map((yo: any, i: number) => [`ob_${documentId}_your_${i + 1}`, documentId, 'your', yo.description, yo.clauseIndex || 0, yo.isCritical]),
+      ...obligations.theirObligations.map((to: any, i: number) => [`ob_${documentId}_their_${i + 1}`, documentId, 'their', to.description, to.clauseIndex || 0, to.isCritical]),
     ];
     if (allObligs.length > 0) {
       await query(
@@ -315,8 +317,10 @@ async function persistProcessedDocument(data: {
     // 5. Batch-insert timelines
     if (timeline.length > 0) {
       const tlVals: unknown[] = [];
-      for (const tl of timeline) {
-        tlVals.push(tl.id, documentId, tl.milestone, tl.timing, tl.type, tl.description, tl.relativeOrder);
+      for (let i = 0; i < timeline.length; i++) {
+        const tl = timeline[i];
+        const tlId = `tl_${documentId}_${i + 1}`;
+        tlVals.push(tlId, documentId, tl.milestone, tl.timing, tl.type, tl.description, tl.relativeOrder);
       }
       await query(
         `INSERT INTO timelines (id, document_id, milestone, timing, type, description, relative_order)

@@ -84,17 +84,14 @@ export const App: React.FC = () => {
   };
 
   const handleDocumentProcessed = async (doc: Document) => {
-    try {
-      const clausesRes = await fetch(apiUrl(`/api/documents/${doc.id}/clauses`));
-      if (clausesRes.ok) {
-        const clauses: Clause[] = await clausesRes.json();
-        setActiveDocument(doc);
-        setActiveClauses(clauses);
-        setCurrentView('results');
-      }
-    } catch (err) {
-      console.error('Failed to load clauses for processed document:', err);
+    const clausesRes = await fetch(apiUrl(`/api/documents/${doc.id}/clauses`));
+    if (!clausesRes.ok) {
+      throw new Error(`Failed to load document clauses (HTTP ${clausesRes.status}).`);
     }
+    const clauses: Clause[] = await clausesRes.json();
+    setActiveDocument(doc);
+    setActiveClauses(clauses);
+    setCurrentView('results');
   };
 
   return (

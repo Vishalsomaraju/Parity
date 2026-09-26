@@ -68,11 +68,20 @@ export const UploadPage: React.FC<UploadPageProps> = ({ onDocumentProcessed, onL
       }
       const completedDoc: Document = await docRes.json();
 
+      if (completedDoc.status === 'failed') {
+        throw new Error(completedDoc.errorMessage || 'Document analysis failed.');
+      }
+
       setProgressPercent(100);
       setStatusMessage('Analysis complete!');
-      setTimeout(() => {
-        onDocumentProcessed(completedDoc);
-      }, 500);
+      setTimeout(async () => {
+        try {
+          await onDocumentProcessed(completedDoc);
+        } catch (procErr: any) {
+          setError(procErr.message || 'Failed to display document results.');
+          setUploading(false);
+        }
+      }, 400);
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred during processing.');
       setUploading(false);
